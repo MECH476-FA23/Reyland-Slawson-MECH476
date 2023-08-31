@@ -1,0 +1,5 @@
+This one was the hardest one yet because I had to understand the vectors and how they were formatted. I'm still a little confused about how sep and collapse are different because they did the same thing, they both added spaces between the vector values.
+
+Notes: 
+Vectors don't need to be just numbers but can be a sequence of words strung together 
+paste works like concatenate where it strings together vector objects

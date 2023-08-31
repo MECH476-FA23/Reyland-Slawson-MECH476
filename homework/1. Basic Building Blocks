@@ -1,0 +1,6 @@
+1. Basic building blocks: Learned about how R functions with arithmatec (eg. when working with arrays, it will cycle through them if they are an unequal number in length). Also learned how to save values and how to use them in arithmatic equations.
+
+Notes: 
+can use the arrows to access functions previously used. 
+R is like Matlab in that it can be used for arithmatic equations/functions
+Arrays will cycle through but sometimes will draw eerrors if the lenghts of the arrays do not have a common denominator. 

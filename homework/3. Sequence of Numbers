@@ -1,0 +1,5 @@
+I learned about how to use arrays in R and how they can be used with different functionalities after the function like when having a times equals integer to repeat the number in the array
+
+Notes: 
+can use ? in front of a function to get R index with help 
+rep creates a repeated vector (in matlab you need to create an empty vector usually before you can fill it, in R, you can create a vector of repeating x number) --> rep(1, times = 5)

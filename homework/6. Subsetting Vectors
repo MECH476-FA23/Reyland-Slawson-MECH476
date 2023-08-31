@@ -1,0 +1,8 @@
+Learned about how to better use c() invectors. This was very interesting as you can place the c() in a vector such as x[] and then pull out. I also found it interesting that you can use - as a negate function as in x[c(-2,-10)] where it pulls all BUT the 2 and 10 positions. 
+
+Notes:
+subset vectors = extracting elements from a vector based on conditions (pick a number in a vector based on the position in the vector --> the third value in vector x)
+  --> done by using square brackets [] 
+    --> eg. x[3]
+using c(x, y, z) where x, y, and z are integers will result in a string of x, y, z
+when using the - symbol, it can be used as a negation (see above)

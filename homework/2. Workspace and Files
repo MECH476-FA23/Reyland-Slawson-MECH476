@@ -1,0 +1,8 @@
+I learned about recursive and how to work around the directory. While I'm still a little confused, I was understanding a bit how the functions of R work and how they function. I also learned about how to set directories, nest them, save and create them.
+
+Notes: 
+Functions to note --> getwd = gets working directory
+setwd = sets working directory 
+ls = lists the objects 
+dir = directory files 
+args = gets the functions some argument will accept 
