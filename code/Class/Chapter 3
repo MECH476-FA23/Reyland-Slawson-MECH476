@@ -1,0 +1,8 @@
+3.3 Reading Data 
+Flat files are files that are 2D like a text file 
+  --> .csv or .txt
+  --> fixed width files: have predefined spaces in the file (if theres columns, the column size will be predefined)
+      a lot of code involved 
+  --> delimited files: .csv, .tsv, .tab (these are separated by commas, tabs, or separate values), delimited means separated by something 
+        --> course, number, day 
+  
