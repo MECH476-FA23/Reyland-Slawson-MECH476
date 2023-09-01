@@ -1,0 +1,5 @@
+I learned in this lesson that while it can be beneficial to have these place holders in an array, they are not numbers and therefore do not act as numbers in logical equations sometimes and can throw off data when trying to figure out how many are actual numebrs
+
+Notes:
+NA is not a number and will not act as one. When using it, it will be skipped and still be displayed as it is a placeholder 
+is.na tells which object in a vector shows NA

@@ -1,0 +1,10 @@
+Learned about logic functions and how they work with swirl. Some of these were hard because I was never great at these in math but using the functions in swirl, it should be easy as it will be able to tell you which are true or which are greater than x etc. 2
+
+Notes: 
+! is used as a negation
+&& and & are used differently --> & is vectorized while && shows one output 
+  --> eg. ((-2:2) >= 0) & (-2:2) <=0) 
+          gives FALSE FALSE TRUE FALSE FALSE
+          ((-2:2) >= 0) && (-2:2) <=0) 
+          gives FALSE
+ same with | and ||

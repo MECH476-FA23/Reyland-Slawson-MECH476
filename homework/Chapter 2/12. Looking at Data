@@ -1,0 +1,6 @@
+This one was kind of confusing for me, I learned how to evaluate large sets of data using summarizing functions that give more generalized data and can then narrow and pin point specific groups or rows. I'm still confused about the structure function and what it provides. 
+
+Notes: 
+head notes the top of the data set (can be used as head(10) which will return the top 10 rows) 
+contrastly tail does the opposite 
+summary provides information about the data as a whole
