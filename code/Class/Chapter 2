@@ -1,0 +1,6 @@
+Ways to view data (with data frames)
+  --> view(data) data will be the data frame name (eg. hg_data)
+      head(data)
+      glipse(data)
+      str(data)
+      can also click the data in the environment tab in the top right cell and it will display 
