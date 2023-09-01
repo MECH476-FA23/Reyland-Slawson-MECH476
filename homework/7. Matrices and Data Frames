@@ -1,5 +1,0 @@
-This lesson I learned about how to format matricies. There was a lot of learning as the functions that rely on different formatting have to be in a certain order which was difficult to remember. 
-
-Notes: 
-matricies and data frames are similar but matricies only hold one class where data frames can hold more
-can name columns and and see dimensions of the matricies or data frames with dim() and colnames() --> colnames function can be used to mass assign names to eaech column without having to individaully name each column. 
