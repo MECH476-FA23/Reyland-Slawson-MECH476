@@ -1,9 +1,9 @@
 ---
 title: 'MECH476: Engineering Data Analysis in R'
 subtitle: 'Chapter 3 Homework: Fort Collins Ozone' 
-author: 'Student Name'
+author: 'Genevieve Reyland-Slawson'
 date: '`r format(Sys.time(), "%d %B, %Y")`'
-output: pdf_document
+output: html_document
 ---
 
 *Note*: Homework can be submitted as *either* .html or .pdf documents.
@@ -44,11 +44,11 @@ standard, which is why you are required to get the emissions checked on your
 car every year.
 
 # Question 0: Load R Packages
+```{r load-packages and setup}
 
-```{r load-packages}
-# do you need to install each R package?
-
-# load packages for current R session
+library(tidyverse)
+library(knitr)
+knitr::opts_knit$set(root.dir = '/Users/genevieve/Reyland-MECH476/data')
 ```
 
 # Question 1: Preparation
@@ -75,10 +75,15 @@ variable name (e.g., `ozone_ppm_hourly`).
 
 ```{r import-data}
 # ozone: import, select, drop missing observations, rename
- # use relative pathname
+ # use relative path name
  # select needed variables 
  # drop missing observations
  # rename main variable
+  ozone_data <- readr::read_csv(file = "ftc_o3.csv") %>%
+    dplyr::select(sample_measurement,
+                  datetime) %>%
+    drop_na() %>%
+    dplyr::rename(ozone_ppm = sample_measurement)
 ```
 
 ## Examine Data
@@ -90,8 +95,11 @@ were no missing values for `datetime`.
 
 ```{r missing-data}
 # examine tibble
+glimpse(ozone_data)
 
 # calculate number of missing observations 
+ozone_data_all <- readr::read_csv(file = "ftc_o3.csv") 
+ozone_data_drop <- sum(is.na(ozone_data_all$sample_measurement))
 ```
 
 # Question 2: Extract and Compare
@@ -104,27 +112,34 @@ to a separate object.
 
 ```{r extract-max}
 # extract top ten ozone values and save them to df
-
+ozonedata_max <- dplyr::slice_max(ozone_data, n = 10, order_by = ozone_ppm)
 ```
 
 Now, complete the same process for the bottom ten ozone values.
 
 ```{r extract-min}
 # extract bottom ten ozone values and save them to df
-
+ozonedata_min <- dplyr::slice_min(ozone_data, n = 10, order_by = ozone_ppm)
 ```
 
-Do the highest and lowest values tend to occur at certain times of the day? 
+Do the highest and lowest values tend to occur at certain times of the day?
+
+--> Ozone values are at max around 8/9 pm and the least in the morning around 7am.
 
 # Question 3: Maximum and Minimum
 
 Using the output from the previous question, on what day does the highest value
 occur? The lowest?
+  
+--> Max value occurs at 20h00 2019-07-03  
+--> Min value occurs at 07h00 2019-01-05
 
 ```{r high-low}
 # extract date/time of highest ozone concentration
+ozonedata_maxtime <- ozonedata_max$datetime[1]
 
 # extract date/time of lowest ozone concentration
+ozonedata_mintime <- ozonedata_min$datetime[1]
 ```
 
 # Question 4: Mutate
@@ -143,8 +158,8 @@ illustrative estimates, not accurate readings.
 - ozone concentration in parts per million (`ozone_ppm`)
 - molecular weight of ozone (47.998 g/mol)
 - Celsius to Kelvin temperature conversion (K = 273.15 + C) (will be used twice but in different ways in the numerator and denominator)
-- estimated atmospheric pressure in Fort Collins, CO (637 mmHg)
-- universal gas constant (22.4136)
+- estimated atmospheric pressure in Fort Collins, CO (637 mmHg) --> 0.637 Hg
+- universal gas constant (22.4136 L) --> 0.0224136 m3
 - estimated temperature in Fort Collins, CO (10$^\circ$ Celsius)
 
 Then, you will need to embed the following ideal gas law equation into a
@@ -157,7 +172,16 @@ $$
 $$
 
 ```{r convert-ozone}
-# create new variable of ug/m3 from ppm and overwrite dataset
+# create new variable of ug/m3 from ppm and overwrite data set
+ozone_weight <- 47.998
+c_to_k <- 273.15
+atp <- 637
+R <- 22.4136
+temp <- 10
+ozone_numerator <- ozone_data$ozone_ppm*ozone_weight*c_to_k*atp
+ozone_denom <- R*(c_to_k+temp)*atp
+ozone_ugm3 <- mutate(.data = ozone_data,
+                     ozone_ugm3 = 1000*(ozone_numerator/ozone_denom))
 
 ```
 
