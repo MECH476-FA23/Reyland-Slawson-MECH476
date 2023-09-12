@@ -6,3 +6,25 @@ Flat files are files that are 2D like a text file
   --> delimited files: .csv, .tsv, .tab (these are separated by commas, tabs, or separate values), delimited means separated by something 
         --> course, number, day 
   
+3.7 Piping
+piping allows one line of code for multiple actions (import this, clean data, etc.)
+only need to define data frame once at the beginning (Only to be used on a single object)
+  --> daily_show <- readr::read_csv(file = "data/daily_show_guests.csv",
+                              skip = 4) %>%
+                                                              # this says import and save object 
+      dplyr::rename(job = GoogleKnowlege_Occupation,
+                    date = Show,
+                    category = Group,
+                    guest_name = Raw_Guest_List) %>%
+                                                              # this says rename the already defined object 
+      dplyr::select(-YEAR) %>%
+                                                              # get rid of year
+      dplyr::mutate(job = str_to_lower(job)) %>%
+      # change all the jobs to all lowercase
+      dplyr::filter(category == "Science")
+      # filter the jobs that are in a science category
+      
+3.8 code chunks 
+Need 3 ticks ``` then curly brackets {}
+eg. ```{r setup, include = FALSE}
+    ```{r cars} --> use r because that's the language, and cars which is the title. the include=FALSE is a chunk option

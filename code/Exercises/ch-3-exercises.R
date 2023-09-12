@@ -1,4 +1,4 @@
-#metadata Genevieve, 6 September 2023, MECH 476 at 12, CH 3
+# Genevieve, 6 September 2023, MECH 476 at 12, CH 3
 # pathnames and data import
 
 # working directory

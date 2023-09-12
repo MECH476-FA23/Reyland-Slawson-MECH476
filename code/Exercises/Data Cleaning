@@ -7,6 +7,6 @@ mutate() adding or changing columns
 
 readr functions 
 skip() skips a number of lines of a file to help the function read files better 
-  --> eg. a file has 10 rows and 4 columns but has four pounded lines of code (## words) called metacode. if you use skip = 4 at the end of the calling of file, it will read the file better. 
+  --> eg. a file has 10 rows and 4 columns but has four pounded lines of code (## words) called metadata. if you use skip = 4 at the end of the calling of file, it will read the file better. 
       --> daily_show <- read_cvs(file = "./data_476/daily_show_guests.csv") will struggle with displaying the data but 
           daily_show <- read_cvs(file = "./data_476/daily_show_guests.csv", skip = 4) will show data much better 
