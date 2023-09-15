@@ -353,7 +353,7 @@ display: none;
 R</h1>
 <h3 class="subtitle">Chapter 3 Homework: Fort Collins Ozone</h3>
 <h4 class="author">Genevieve Reyland-Slawson</h4>
-<h4 class="date">12 September, 2023</h4>
+<h4 class="date">15 September, 2023</h4>
 
 </div>
 
@@ -391,6 +391,9 @@ are required to get the emissions checked on your car every year.</p>
 </div>
 <div id="question-0-load-r-packages" class="section level1">
 <h1>Question 0: Load R Packages</h1>
+<pre class="r"><code>library(tidyverse)
+library(knitr)
+knitr::opts_knit$set(root.dir = &#39;/Users/genevieve/Reyland-MECH476/data&#39;)</code></pre>
 </div>
 <div id="question-1-preparation" class="section level1">
 <h1>Question 1: Preparation</h1>
@@ -416,6 +419,16 @@ indicating an ozone concentration measurement in parts per million
 (ppm). <em>FYI</em>: If the dataset had multiple ozone measurements on
 different time scales, it would be important to include that information
 in the variable name (e.g., <code>ozone_ppm_hourly</code>).</p>
+<pre class="r"><code># ozone: import, select, drop missing observations, rename
+ # use relative path name
+ # select needed variables 
+ # drop missing observations
+ # rename main variable
+  ozone_data &lt;- readr::read_csv(file = &quot;ftc_o3.csv&quot;) %&gt;%
+    dplyr::select(sample_measurement,
+                  datetime) %&gt;%
+    drop_na() %&gt;%
+    dplyr::rename(ozone_ppm = sample_measurement)</code></pre>
 </div>
 <div id="examine-data" class="section level2">
 <h2>Examine Data</h2>
@@ -424,10 +437,15 @@ file imported and was manipulated properly. How many observations were
 dropped due to missing values? <em>Hint</em>: Only consider the
 <code>ozone_ppm</code> variable; there were no missing values for
 <code>datetime</code>.</p>
+<pre class="r"><code># examine tibble
+glimpse(ozone_data)</code></pre>
 <pre><code>## Rows: 16,914
 ## Columns: 2
 ## $ ozone_ppm &lt;dbl&gt; 0.017, 0.017, 0.017, 0.017, 0.015, 0.017, 0.028, 0.030, 0.03…
 ## $ datetime  &lt;dttm&gt; 2019-01-01 07:00:00, 2019-01-01 08:00:00, 2019-01-01 09:00:…</code></pre>
+<pre class="r"><code># calculate number of missing observations 
+ozone_data_all &lt;- readr::read_csv(file = &quot;ftc_o3.csv&quot;) 
+ozone_data_drop &lt;- sum(is.na(ozone_data_all$sample_measurement))</code></pre>
 </div>
 </div>
 <div id="question-2-extract-and-compare" class="section level1">
@@ -438,7 +456,11 @@ arguments (one to specify number of observations to extract and one to
 specify by which variable R should the observations in the output),
 extract the top ten ozone values and assign them to a separate
 object.</p>
+<pre class="r"><code># extract top ten ozone values and save them to df
+ozonedata_max &lt;- dplyr::slice_max(ozone_data, n = 10, order_by = ozone_ppm)</code></pre>
 <p>Now, complete the same process for the bottom ten ozone values.</p>
+<pre class="r"><code># extract bottom ten ozone values and save them to df
+ozonedata_min &lt;- dplyr::slice_min(ozone_data, n = 10, order_by = ozone_ppm)</code></pre>
 <p>Do the highest and lowest values tend to occur at certain times of
 the day?</p>
 <p>–&gt; Ozone values are at max around 8/9 pm and the least in the
@@ -450,6 +472,11 @@ morning around 7am.</p>
 highest value occur? The lowest?</p>
 <p>–&gt; Max value occurs at 20h00 2019-07-03<br />
 –&gt; Min value occurs at 07h00 2019-01-05</p>
+<pre class="r"><code># extract date/time of highest ozone concentration
+ozonedata_maxtime &lt;- ozonedata_max$datetime[1]
+
+# extract date/time of lowest ozone concentration
+ozonedata_mintime &lt;- ozonedata_min$datetime[1]</code></pre>
 </div>
 <div id="question-4-mutate" class="section level1">
 <h1>Question 4: Mutate</h1>
@@ -485,13 +512,23 @@ weight of ozone})(\text{Celsius to Kelvin value}) (\text{atmospheric
 pressure}) \Big)}{\Big((\text{universal gas constant})(\text{Celsius to
 Kelvin value} + \text{temperature})(\text{atmospheric pressure})\Big)}
 \]</span></p>
+<pre class="r"><code># create new variable of ug/m3 from ppm and overwrite data set
+ozone_weight &lt;- 47.998
+c_to_k &lt;- 273.15
+atp &lt;- 637
+R &lt;- 22.4136
+temp &lt;- 10
+ozone_numerator &lt;- ozone_data$ozone_ppm*ozone_weight*c_to_k*atp
+ozone_denom &lt;- R*(c_to_k+temp)*atp
+ozone_ugm3 &lt;- mutate(.data = ozone_data,
+                     ozone_ugm3 = 1000*(ozone_numerator/ozone_denom))</code></pre>
 <div style="page-break-after: always;"></div>
 </div>
 <div id="appendix" class="section level1">
 <h1>Appendix</h1>
 <pre class="r"><code># set global options for figures, code, warnings, and messages
 knitr::opts_chunk$set(fig.width = 6, fig.height = 4, fig.path = &quot;../figs/&quot;,
-                      echo = FALSE, warning = FALSE, message = FALSE)
+                      echo = TRUE, warning = FALSE, message = FALSE)
 
 library(tidyverse)
 library(knitr)
