@@ -1,9 +1,9 @@
 ---
 title: 'MECH481A6: Engineering Data Analysis in R'
 subtitle: 'Chapter 4 Homework: Visualizing Ozone Data' 
-author: 'Student Name'
+author: 'Genevieve Reyland-Slawson'
 date: '`r format(Sys.time(), "%d %B, %Y")`'
-output: pdf_document
+output: html_document
 ---
 
 *Note*: If you haven't installed $LaTex$, change the output mode in the above
@@ -24,7 +24,7 @@ office hours.
 ```{r global-options, include = FALSE}
 # set global options for figures, code, warnings, and messages
 knitr::opts_chunk$set(fig.width = 6, fig.height = 4, fig.path = "../figs/",
-                      echo = FALSE, warning = FALSE, message = FALSE)
+                      echo = TRUE, warning = FALSE, message = FALSE)
 ```
 
 # Ozone data
@@ -45,6 +45,8 @@ the pathnames, if needed.
 
 ```{r load-packages}
 # load packages for current R session
+library(tidyverse)
+library(knitr)
 ```
 
 ## Import, select, and clean data
@@ -58,6 +60,16 @@ the output as a `tibble` (*not in that particular order*).
 
 ```{r import-data}
 # ozone: import, select, drop missing observations, rename
+# Specify the relative path to the CSV file
+
+csv_path <- "/Users/genevieve/Reyland-MECH476/data/ftc_o3.csv"
+
+# Read the CSV file using the relative path
+  ozone_data <- readr::read_csv(file = csv_path) %>%
+    dplyr::select(sample_measurement,
+                  datetime) %>%
+    drop_na() %>%
+    dplyr::rename(ozone_ppm = sample_measurement)
 ```
 
 ## Examine Data
@@ -67,6 +79,12 @@ imported and was manipulated properly.
 
 ```{r missing-data}
 # examine dataframe object 
+# examine tibble
+glimpse(ozone_data)
+
+# calculate number of missing observations 
+ozone_data_all <- readr::read_csv(file = csv_path) 
+ozone_data_drop <- sum(is.na(ozone_data_all$sample_measurement))
 ```
 
 # Question 1: `ggplot2` time series
@@ -77,13 +95,23 @@ ink-to-information ratio. Ugly plots are okay when you are just exploring data.
 
 ```{r ozone-time}
 # create basic time series using ggplot2 package
+library(ggplot2)
+ggplot(data = ozone_data) +
+  geom_point(aes(x = datetime,
+                 y = ozone_ppm))
 ```
 
 # Question 2: Base R equivalent
 
 For comparison, what function could you use to create a time series of these
 data in base R? How does the syntax of this function compare to that of
-`ggplot()`?
+`ggplot()`? 
+``` {r plot in R}
+plot(x = ozone_data$datetime, 
+     y = ozone_data$ozone_ppm,
+     xlab = "datetime",
+     ylab = "ozone_ppm")
+```
 
 # Question 3: `ggplot` object
 
@@ -92,6 +120,9 @@ a descriptive name.
 
 ```{r ozone-object}
 # create base layer of ozone time series (no geom) and save to object
+ozone_ggplot <- ggplot(ozone_data, 
+                          aes(x = datetime,
+                              y = ozone_ppm))
 ```
 
 # Question 4: `geom`
@@ -102,12 +133,15 @@ in the `ggplot` object in Question 3.
 
 ```{r ozone-geom}
 # add layer to ggplot object
+ozone_ggplot <- ozone_ggplot + geom_point()
 ```
 
 # Question 5: `ggplot` layers
 
 Call and examine object within the R Markdown, Console, or using View. How
 many layers does this `ggplot` object contain? Why?
+  
+--> ggplot has 1 layer: geom point layer
 
 # Question 6: theme
 
@@ -116,6 +150,7 @@ Next, add the `ggplot2` theme  of your choice to the `ggplot` object with
 
 ```{r ozone-theme}
 # add theme to ggplot object
+ozone_ggplot <- ozone_ggplot + theme_classic()
 ```
 
 # Question 7: additions
@@ -135,6 +170,9 @@ Using this technique and the same additive approach (`ggplot_object + ... + titl
 
 ```{r ozone-time-label}
 # add title and axis labels to time series
+ozone_ggplot <- ozone_ggplot + labs(x = "Date Time",
+                                    y = "Ozone Concentration (ppm)",
+                                    title = "Ozone Measurements in Fort Collins by Hour")
 ```
 
 # Question 7: ways to see more granularity  
@@ -149,7 +187,8 @@ points using the `alpha = ` aesthetic.  Try recreating the time-series plot with
 
 ```{r ozone-time-label-alpha}
 # add alpha aesthetic to the geom_point()
-
+ozone_ggplot <- ozone_ggplot + aes(alpha = 0.2)
+ozone_ggplot
 ```
 
 Alternatively, we could examine just the ozone measurements that
@@ -161,14 +200,22 @@ ozone concentration measurement on the y-axis. Remember to add the relevant
 
 ```{r high-ozone-plot}
 # filter data to ozone concentration measurements exceeding 0.070 ppm 
+high_ozone <- filter(ozone_data, ozone_ppm > 0.070) 
 
 # time series of high ozone measurements
+high_ozone_plot <- ggplot(high_ozone, 
+                          aes(x = datetime,
+                              y = ozone_ppm)) +
+                            geom_point()
+high_ozone_plot
 ```
 
 # Question 8: seasonality
 
 Based on the time series, do you see any seasonal pattern for higher levels
 of ozone? Describe what you see.
+  
+--> a higher level of ozone occurs near the begining of July. This makes sense as this is peak summer time and most people are on vacation and traveling. 
 
 # Question 9: proportion
 
@@ -178,6 +225,8 @@ the corresponding proportion in one line of code.
 
 ```{r ozone-perc}
 # calculate proportion of ozone measurements that exceed 0.070 ppm 
+ozone_perc <- (nrow(high_ozone) / nrow(ozone_data))*100
+print(paste(round(ozone_perc, digits = 3), "% exceeding 0.070 ppm")) # rounded percentage of measurements that exceed 0.07 ppm
 ```
 
 # Question 10: `ggplot2` extensions
@@ -187,7 +236,7 @@ browse the `ggplot2` extensions. These themes can be very useful, so it's good
 to be aware of them. Which theme would be appropriate for your own research or
 senior project, and why? How would you use it? Briefly describe your data
 and why the extension would improve the data visualization and communication.
-
+  --> ggaminate is a theme that could be beneficial for my senior design project. I am on a team that is developing a fully automated hydroponic greenhouse. This greenhouse will be monitoring levels of nutrient through EC sensors as well as other sensors for pH, water pressure, and sunlight. All of these could benefit from ggaminate as it would be able to show the user (there will be a user screen to help the user see how the crops are doing and the levels of water, nutrient, light, and other specs) a visual for the specs predetermined over time. 
 \newpage
 
 # Appendix

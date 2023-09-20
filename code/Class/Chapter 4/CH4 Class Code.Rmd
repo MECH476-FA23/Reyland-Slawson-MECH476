@@ -1,0 +1,233 @@
+---
+title: 'Chapter 4 Class Code
+subtitle: 'Chapter 4 ggplot examples' 
+author: 'Genevieve Reyland-Slawson
+date: '`r format(Sys.time(), "%d %B, %Y")`'
+output: html_document
+---
+
+```{r global-options, include = FALSE}
+# set global options for figures, code, warnings, and messages
+knitr::opts_chunk$set(fig.width = 6, fig.height = 4, fig.path = "../figs/",
+                      echo = TRUE, warning = FALSE, message = FALSE)
+```
+
+# script for ggplot 
+Installing the packages ggplot and tidyverse
+``` {r installing the packages}
+
+install.packages("ggplot2") 
+library(ggplot2)
+library(tidyverse)
+
+```
+
+Use ggplot to map the data and a single aesthetic 
+``` {r using plot to map data}
+# use ggplot() to map the data and a single aesthetic (variable = class)
+ggplot(data = mpg, aes(x = class)) + 
+  geom_bar() # call to a specific geom to plot the mapped data
+```
+
+``` {r select data}
+# find the number of unique values that are in the data frame of drv
+unique(data_mpg$drv)
+
+# call to ggplot to map the data and a single aesthetic
+ggplot(data = mpg, aes(x = class, fill = drv)) +
+  geom_bar()  # call to a specific geom to plot the mapped data
+
+data_mpg %>%
+  filter(class == "compact" & drv == "4")
+# this code filters out the cars that hvae a class that's compact and a drive train that's 4 wheel drive 
+```
+
+Different ways to plot the same plot
+``` {r plot geoms}
+# these all plot the same plot 
+
+# call to ggplot() with aes() specified in main call
+ggplot(data = mpg, aes(x = class, fill = drv)) +
+geom_bar()
+
+# call to ggplot() with aes() specified in geom
+ggplot(data = mpg) +
+geom_bar(aes(x = class, fill = drv))
+
+# call to ggplot() with a mix of aes() mappings 
+ggplot(data = mpg, aes(x = class)) +
+geom_bar(aes(fill = drv))
+
+# call to ggplot() with all mappings in the geom 
+ggplot() +
+geom_bar(data = mpg, aes(x = class, fill = drv))
+
+# call to ggplot where one `fill` overrides another
+ggplot(data = mpg, aes(x = class, fill = drv)) +
+  geom_bar(fill = "darkgreen")
+
+# scatterplot plotting: mpg vs hwy mileage
+# make sure that anything inside the aes() is whats the data. keep color, shape, etc outside the aes() because it's technically a constant
+plot2 <- ggplot(data = data_mpg) +
+  geom_point(aes(x = year,
+                 y = hwy,
+             color = drv),
+             shape = 9)
+plot2
+    # the plot shows two lines which was unexpected but it means that there were  only two years documented in this data set 
+
+data_mpg %>% 
+  filter(year == "2008" & drv =="r")
+
+```
+
+Using scales to change aspects of the plots (title, legend, axis titles)
+``` {r scales: useful edits}
+mpg <- mpg
+ggplot(mpg) + 
+  geom_point(aes(x = cty,
+                 y = hwy, 
+                 color = class)) + 
+  xlab("City miles per gallon, mi/g") +
+  ylab("highway miles per gallon (miles/gallon)") + 
+  ggtitle("Model Year 1999 & 2008 Comparison Point")
+
+# instead of using geom_point, use geom_jitter. this makes points that are on top to move 
+mpg <- mpg
+ggplot(mpg) + 
+  geom_jitter(aes(x = cty,
+                 y = hwy, 
+                 color = class),
+              alpha = 0.3, # alpha is outside the aesthetic call but in the jitter. this talks about transparency of point to see overlapping points. alpha = 1 is full 100%, 0 is fully transparent
+              size = 3) + 
+  # add slope line of 1 for comparison
+  geom_abline(intercept = 0, 
+              slope = 1,
+              color = "grey",
+              linetype = "dashed") +
+  # make the plot a perfect square not rectangular (for visual purposes)
+  coord_fixed() +
+  # change the axis limits
+  xlim(c(0,50)) + 
+  ylim(c(0,50))+
+  # add lables for x and y axis and title
+  xlab("City miles per gallon, mi/g") +
+  ylab("highway miles per gallon (miles/gallon)") + 
+  ggtitle("Model Year 1999 & 2008 Comparison Jitter") +
+  theme_linedraw() + 
+  # center justify the title
+  theme(plot.title = element_text(hjust = 0.5))
+
+```
+Use the plotted data patterns to question data and pull specific values from data frame
+``` {r exploring specifics of ggplot data - filter}
+# pull mpg data, pull rows where city mpg is less than 10, look at top 10 values 
+mpg %>% 
+  filter(cty < 10) %>% 
+  head()
+
+# pull mpg data, pull rows that have city mpg of greater than 30
+mpg %>% 
+  filter(cty > 30) %>% 
+  head()
+
+# find cars with less than 20 mpg city and group them by class
+# group_by says take the data and converts to grouped table where operations are performed by group. So it takes the data and then performs it for each group. Can add multiple groups (eg group_by(class, drv) which gives class and drive and how many (n))
+mpg %>%
+  filter(hwy < 20) %>%
+  group_by(drv) %>%
+  summarise(
+    class = class,
+    avg_cty = mean(cty), 
+    manufacturer = manufacturer
+  )
+```
+
+Example 1 ggplot2
+Using mpg data seet to see scatterplots and examine correlation between vehicle's highway and city fuel economies for the year 2008
+``` {r example 1}
+# quantitative summary in pipe
+mpg %>% 
+  dplyr::filter(year == 2008) %>%
+  dplyr::group_by(class) %>%
+  dplyr::tally() %>% 
+  dplyr::ungroup()
+
+# alternative
+mpg %>% 
+  dplyr::filter(year == 2008) %>% 
+  dplyr::count(class)
+
+# load required R packages
+library(dplyr) # for data wrangling and manipulation
+library(ggplot2) # for data visualization
+## alternatively, use `library(tidyverse)`, if you will need multiple packages
+
+ggplot2::ggplot() +
+  geom_point(data = dplyr::filter(mpg, year == 2008), # filter data
+             aes(x = hwy, y = cty, color = class)) # assign x, y, and color
+
+# call to ggplot, note that data and aesthetics are called in first geom layer
+ggplot2::ggplot() +
+  # first geom layer (jitter)
+  geom_jitter(data = dplyr::filter(mpg, year == 2008),
+             aes(x = hwy, y = cty, color = class),
+             width = 0.4,
+             alpha = 0.6,
+             size = 2) +
+  # second geom layer (line)
+  geom_abline(intercept = 0,
+              slope = 1, 
+              color = "grey",
+              linetype = "dashed") +
+  # fix x and y coordinates to be equal in relative scale
+  coord_fixed() +
+  # set axis limits
+  xlim(c(0,40)) +
+  ylim(c(0,40)) +
+  # add axis labels
+  xlab("Highway Fuel Economy, mi/gal") +
+  ylab("City Fuel Economy, mi/gal") +
+  # adopt theme without grey background
+  theme_bw()
+```
+
+Example 2 ggplot2
+Looking at the highway fuel efficiency for SUVs in 2008
+``` {r example 2}
+# take mpg data frame and assign new object. Filter the data only rows with class = suv and the year is 2008. Group that data by manufacture. summarize the data where and assign highway mean and display the mean
+mpg_subset <-mpg %>%
+  dplyr::filter(class == "suv", year == "2008") %>%
+  dplyr::group_by(manufacturer) %>%
+  dplyr::summarise(hwy_mean = mean(hwy), displ_mean = mean(displ))
+
+# call to ggplot, note that data and aesthetics are called in each geom layer
+ggplot() +
+  # first layer - note the main data frame was called
+  geom_point(data = filter(mpg, class == "suv" & year == 2008),
+           aes(x = manufacturer, 
+               y = hwy, 
+               color = displ),
+           size = 2) +
+  # second layer - note the subset data frame was called 
+  geom_errorbar(data = mpg_subset,
+             aes(x = manufacturer,
+                 ymin = hwy_mean,
+                 ymax = hwy_mean,
+                 color = displ_mean),
+             size = 1) +
+  # customize plot labels
+  labs(title = "Fuel Economy for 2008 SUVs by Manufacturer and Engine Displacement",
+       color = "Disp (L)") +
+  ylab("highway fuel economy (miles/gal)") +
+  # add a fancy color scale
+  scale_colour_stepsn(colours = hcl.colors(n=5, palette = "plasma")) +
+  # adopt a theme without a gray background
+  theme_classic() +
+  # enclose the plot on all sides with a black line
+  theme(panel.background = element_rect(color = "black",
+                                        size = 1))
+
+# the points are specific data points from the data frame, the lines are the mean value for all of the points for that specific manufacturer. 
+  
+```

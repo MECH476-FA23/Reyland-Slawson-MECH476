@@ -48,7 +48,6 @@ car every year.
 
 library(tidyverse)
 library(knitr)
-knitr::opts_knit$set(root.dir = '/Users/genevieve/Reyland-MECH476/data')
 ```
 
 # Question 1: Preparation
@@ -79,7 +78,10 @@ variable name (e.g., `ozone_ppm_hourly`).
  # select needed variables 
  # drop missing observations
  # rename main variable
-  ozone_data <- readr::read_csv(file = "ftc_o3.csv") %>%
+csv_path <- "/Users/genevieve/Reyland-MECH476/data/ftc_o3.csv"
+
+# Read the CSV file using the relative path
+  ozone_data <- readr::read_csv(file = csv_path) %>%
     dplyr::select(sample_measurement,
                   datetime) %>%
     drop_na() %>%
@@ -98,7 +100,7 @@ were no missing values for `datetime`.
 glimpse(ozone_data)
 
 # calculate number of missing observations 
-ozone_data_all <- readr::read_csv(file = "ftc_o3.csv") 
+ozone_data_all <- readr::read_csv(file = csv_path) 
 ozone_data_drop <- sum(is.na(ozone_data_all$sample_measurement))
 ```
 

@@ -1,0 +1,11 @@
+common plot aesthetics 
+alpha - transparency
+linetype - solid, dotted, dashed
+
+adding geomes 
+histograph - geom_histogram()
+scatterplot - geom_point()
+boxplot - geom_boxplot()
+Must add plus after function 
+eg. ggplot(data = data_mpg, aes(...) + 
+    geom_pooint() )

@@ -1,0 +1,93 @@
+Commands and functions to know
+[ ] --> brackets are used when indexing things so for example, when you want the firrst number in an array called "numbers"" you'd put numbers[1]
+
+# --> pound symbol makes the text a comment
+
+? --> you can use the question mark in front of a function or command to see the R index and see how to use the function, what commands are mandatory and what are not with some example code 
+
+<- --> this arrow assigns a function to an object
+
+c --> concatenate aka combine to a string. eg. c(1,2,3,4) returns 1 2 3 4 or c("pears", "apples", "peaches") returns "pears"   "apples"  "peaches"
+
+: --> operator that shows through some number. (selects a range of consecutive variables) eg numbers <- 1:5 returns 1 2 3 4 5
+
+Logical operators: == != & |
+== is used for equal
+= is used to define something 
+!= not equal 
+& and 
+| or 
+
+Directory abbreviations: ~ . .. ../..
+~ home directory
+. curent working directory 
+.. one up from current directory
+../.. two up from current directory 
+
+%>% --> this is a pipe that allows the function on the left side to be used as an argument for the function on the right hand side of the pipe
+
+getwd --> returns current working directory (can change the working directory with setwd)
+
+sessionInfo --> returns information on the current R session
+
+print --> prints the value stored in an object. eg. apples <- c(1,2,3,4), print(apples) OR print(c(1,2,3,4)) returns 1 2 3 4
+
+paste --> returns concatenated values. eg paste("this", "is", "real") returns this is real. You can add a delimiter too. eg paste("this", "is", "real", sep = "-") returns this-is-real
+
+paste0 --> same as paste but does not include a space. eg paste("this", "is", "real") returns thisisreal
+
+class --> returns the class of a string. eg numbers <- 1:5, class(numbers) returns "numerical"
+
+length --> returns length of string
+
+sum --> returns sum of numerical, logiv, or complex vectors. Has the ability to remove NAs eg. sum(numbers, na.rm = FALSE) returns 5
+
+tibble --> a data frame that returns only the first 10 rows of a data frame
+
+library --> function that allows user to import packages to R
+
+install.package --> function that allows packages to be installed to R 
+
+dim --> returns the length of row names
+
+nrow --> returns the number of rows present in an object 
+
+ncol --> returns the number of columns present in an object
+
+str --> displays the internal structure of an object. 
+
+summary --> returns summary of object (will give minimum, median, mean, max)
+
+slice --> lets you index an objects rows by their integer locations. You can select, remove and duplicate rows. 
+  you can use slice_head to pick out the first rows, slice_tail to pick the last rows, slice_min/slice_max to pick out the highest and lowest values, you can add n=x where x is a number that will be extracted so slice_min, x = 10 will extract lowest 10 values in x. 
+  
+select --> selects certain variables in a data frame
+
+head --> function that returns the top rows of an object 
+
+tail --> returns bottom rows of an objet 
+
+vignette --> returns object of same class
+
+glimpse --> gives a brief overview of an object. 
+
+mutate --> creates new column that are functions of existing variables, can also modify (if name is same as existing column) and delete columns. eg. mutate(mass_norm = mass)
+
+rename --> renames a variable (new name = old name)
+
+filter --> subsets a data frame by row (compared to select which returns a subset of the columns)
+
+arrange --> orders the rows of a data frame by values of selected columns. eg if there is a table where col 1 is called names and col 2 is called height, arrange(.data, names) which will arrange the table based on column 1 values 
+
+read_csv --> read csv funciton
+
+read_delim --> reads through delimiters like - or , 
+
+read_fwf --> reads flat width files like a csv file or excel file 
+
+optional readr arguments: skip, col_types, col_names, n_max
+list.files
+unique
+is.na
+citation
+colnames
