@@ -115,3 +115,20 @@ ggplot(data = data_raw) +
   xlim(0 ,500000)
 theme_bw
 ```
+
+``` {r boxplots}
+csv_path <- "/Users/genevieve/Reyland-MECH476/data/NOAA_temps_cleaned.csv"
+noaa_temp <- readr::read_csv(file = csv_path)
+ggplot(data = noaa_temp,
+       mapping = aes(x = temp_hr_f, 
+                     y = location, 
+                     fill = location)) +
+  geom_boxplot() +
+  geom_jitter(height = 0.25,
+              alpha = 0.2,
+              shape = "circle filled",
+              color = "black") +
+  labs(y = "Region",
+       x = "Temperature (°F)") +
+  theme_bw() 
+```
