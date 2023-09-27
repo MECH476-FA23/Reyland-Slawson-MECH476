@@ -1,0 +1,117 @@
+---
+title: 'Chapter 5 Code'
+subtitle: 'Code from class modeling chapter 5 concepts' 
+author: 'Genevieve Reyland-Slawson'
+date: '`r format(Sys.time(), "%d %B, %Y")`'
+output: html_document
+---
+
+```{r global-options, include = FALSE}
+# set global options for figures, code, warnings, and messages
+knitr::opts_chunk$set(fig.width = 6, fig.height = 4, fig.path = "../figs/",
+                      echo = TRUE, warning = FALSE, message = FALSE)
+```
+
+``` {r installing the packages}
+
+install.packages("ggplot2") 
+library(ggplot2)
+library(tidyverse)
+csv_path <- "/Users/genevieve/Reyland-MECH476/data/NOAA_temps_cleaned.csv"
+```
+
+``` {r univariate data}
+noaa_temps <- readr::read_csv(csv_path)
+ggplot(noaa_temps) + 
+  geom_jitter(aes(x = temp_hr_f,
+                  y = location,
+                  color = location))
+```
+
+Quartiles 
+``` {r working with quartiles}
+
+# each quartile is defined only by its upper end value and quartiles are defined after data have been rank ordered from lowest to highest value 
+
+# "set seed" to generate the same results each time
+set.seed(1)
+# create uniform distribution
+univar <- runif(n = 1000, 
+                min = 0, 
+                max = 100) 
+# split uniform distribution into quantiles
+univar_quart <- quantile(univar, 
+                         probs = seq(0, 1, 0.25)) %>%
+  round(1) 
+univar_quart
+
+## normal distribution 
+# "set seed" to generate the same results each time
+set.seed(2) 
+# create normal distribution
+norm_dist <- rnorm(1000, mean = 50, sd = 15)
+# split normal distribution into quantiles and output tabular result
+quantile(norm_dist, probs = seq(0, 1, 0.1)) %>% round(0)
+```
+
+``` {r plot types: enumerative and summary}
+# randomly sample two variables from normal distributions with `rnorm()`
+normal_data <- tibble::tibble(a = rnorm(n=1000, mean = 15, sd = 5),
+                              b = rnorm(n=1000, mean = 10, sd = 3))
+# create unit quantile values for the `normal_data`
+normal_data_cdf <- normal_data %>%
+  dplyr::select(a) %>%
+  dplyr::arrange(a) %>%
+  dplyr::mutate(unit_quantiles = seq.int(from = 1/length(a), 
+                                         to = 1,
+                                         by = 1/length(a)))
+
+# can create cumulative distribution plots with different geom options: geom_step(aes(x = your_univariate_data), stat = "ecdf") or stat_ecdf(aes(x = your_univariate_data))
+
+csv_path <- "/Users/genevieve/Reyland-MECH476/data/ME_salaries.csv"  
+  data_raw <- read_csv(file = csv_path) %>%
+    rename_with(.fn = tolower, .cols = everything())
+
+# create cumulative fractions 
+ordered_salaries <- data_raw %>%
+  dplyr::select(salary) %>%
+  dplyr::filter(salary < 500000) %>% # to remove numeric identifiers 
+  dplyr::arrange(salary) %>%
+  dplyr::mutate(cum_pct = seq.int(from = 1/length(salary),
+                                  to = 1, 
+                                  by = 1/length(salary))) 
+# alternate method if you don't want to calculate cumulative fractions
+ordered_salaries %>% 
+  ggplot2::ggplot(mapping = aes(x = salary)) +
+  geom_step(stat = "ecdf") + # "empirical cumulative distribution function"
+  labs(x = "Salaries of ME Graduates", y = "Cumulative Fraction") +
+  scale_y_continuous(limits = c(-0.05, 1.03), 
+                     expand = c(0,0),
+                     breaks = seq(from = 0, 
+                                  to = 1, 
+                                  by = 0.1)) +
+  scale_x_continuous(labels = scales::label_dollar(scale = 0.001, 
+                                                   prefix = '$', 
+                                                   suffix = 'k'),
+                     minor_breaks = seq(from = 0,
+                                        to = 450000,
+                                        by = 10000))+
+  geom_segment(data = data.frame(x = quantile(ordered_salaries$salary),
+                                 y = rep.int(-.05, 5),
+                                 xend = quantile(ordered_salaries$salary),
+                                 yend = seq(from = 0, to = 1, by = 0.25)),
+               aes(x = x, y = y, xend = xend, yend = yend),
+               color = "red",
+               linetype = "dashed") +
+  theme_bw()
+
+ggsave("./images/cdf_me_salaries.png", dpi = 150)
+
+#creating a histogram
+ggplot(data = data_raw) + 
+  geom_histogram(aes(x = salary),
+                 bins = 50, 
+                 color = "purple") + 
+  xlim(0 ,500000)
+theme_bw
+```
