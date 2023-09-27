@@ -1,0 +1,9 @@
+Quartiles: each quartile is defined only by its upper end value and quartiles are defined after data have been rank ordered from lowest to highest value 
+  --> 0th quartile is the minimum value
+      4th quartile is the maximum value 
+      median is the upper bound of the 2nd quartile 
+      --> function as 0 = minimum then 1st quartile is 0th to 1st (5 values in total, 4 quartiles)
+
+plot types: summary plots and enumerative plots 
+  --> summary plots show summariezed data and easy to read and see main points BUT doesn't show all the data so it is more likely to miss nuances or special features when looking at summary plots
+  --> enumerative plots show all data without manipulation BUT takes more time and energy to understand
