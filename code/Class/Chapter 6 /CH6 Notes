@@ -1,0 +1,59 @@
+stringr is a package in tidyverse that can help simplify string analysis 
+library(stringr)
+str_ function
+  if you type str_ you can see the number of functions that stringr can do
+  
+subset pulls out section (like using ctl F)
+  --> stringr::str_subset(string = names_respond,
+                    pattern = "li") 
+      --> returns "William" "Ali"
+
+detect finds exact what is true and how many 
+  --> stringr::str_detect(string = names_respond,
+                    pattern = "Josh")
+      --> returns: FALSE TRUE FALSE FALSE FALSE FALSE FALSE FALSE
+    
+split splits up all objects at the pattern 
+  --> if you have mateo then use split 
+      stringr::str_split(string = names_respond,
+                   pattern = "t")
+      --> returns: 
+      [1]]
+      [1] "Ahmed"
+
+      [[2]]
+      [1] "Josh"
+      
+      [[3]]
+      [1] "Ma" "eo"
+      
+      [[4]]
+      [1] "William"
+      
+      [[5]]
+      [1] "Ali"
+      
+      [[6]]
+      [1] "Wei"
+      
+      [[7]]
+      [1] "S"     "eve-O"
+      
+      [[8]]
+      [1] "John"
+
+any letter followed by the numbers 3, 4, or 5	
+  --> [:alpha:][345]
+  --> brackets are regex
+      alpha means any letter 
+      brackets = following, number is conditions 
+  
+strings that start with ‘ID’ and are followed by 4 numbers	
+  --> ^ID[:digit:]{4}
+  --> carrot shows that it must be beginning then criteria (ID)
+      [any digits] {culy brackets show the conditions}
+      
+regex shows up in quotes almost all the time 
+--> string_replace replaces first of pattern, string_replace_all replaces all of the condition iterations
+
+

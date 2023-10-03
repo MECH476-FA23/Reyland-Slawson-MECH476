@@ -1,0 +1,72 @@
+---
+title: 'Chapter 6 Code'
+subtitle: 'Code from class modeling chapter 6 concepts' 
+author: 'Genevieve Reyland-Slawson'
+date: '`r format(Sys.time(), "%d %B, %Y")`'
+output: html_document
+---
+
+```{r global-options, include = FALSE}
+# set global options for figures, code, warnings, and messages
+knitr::opts_chunk$set(fig.width = 6, fig.height = 4, fig.path = "../figs/",
+                      echo = TRUE, warning = FALSE, message = FALSE)
+```
+
+``` {r load packages}
+library(tidyverse)
+library(stringr)
+```
+
+Examples of Vectorized String Data 
+``` {r string examples}
+names_respond <- c("Ahmed", 
+                   "Josh", 
+                   "Mateo", 
+                   "William", 
+                   "Ali", 
+                   "Wei", 
+                   "Steve-O",
+                   "John")
+q1_responses <- c("Because you told me to do it.",
+                  "It seemed like the right thing to do at the time.",
+                  "Because I had been over-served.",
+                  "I don't know. I just did it.",
+                  "I got caught up in the heat of the moment.",
+                  "I was given an opportunity. I took my shot.",
+                  "I plead the 5th.",
+                  "I could ask you the same question.")
+failure_mode <- c("fracture",
+                  "yielding", 
+                  "deflection", 
+                  "fatigue", 
+                  "creep")
+
+# proof of vector type
+class(names_respond)
+
+# making the data into a data frame, you can add more rows by adding them to the tibble
+# tible(title of column = data) in this case, you can set title = vector since you already named a vector with data in it
+tibble(names = names_respond)
+
+# string detect will look through the string and see if true through the whole vector
+stringr::str_detect(string = names_respond,
+                    pattern = "Josh") %>%
+  sum()/length(names_respond) # find number that is true (1 is true, 0 is false), dividing by length will show the decimal of pattern to the vector (can be percent if mult by 100)
+
+stringr::str_subset(string = names_respond,
+                    pattern = "li") # subset pulls out section (like using ctl F)
+
+stringr::str_split(string = names_respond,
+                   pattern = "t") # splits up all objects at the pattern 
+
+```
+``` {r regular expressions}
+stringr::str_replace(string = q1_responses,
+                     pattern = "\\.",
+                     replacement = "\\?")
+```
+``` {r dates and date-times}
+# using the current system time 
+Sys.time()
+
+```
