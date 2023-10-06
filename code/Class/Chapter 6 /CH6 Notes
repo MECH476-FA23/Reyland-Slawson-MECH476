@@ -56,4 +56,13 @@ strings that start with ‘ID’ and are followed by 4 numbers
 regex shows up in quotes almost all the time 
 --> string_replace replaces first of pattern, string_replace_all replaces all of the condition iterations
 
+strptime() = string parse into date-time 
+  --> converts between character classes and date-time classes 
+  --> lubridate is a package that is easier to work with date time objects
+    --> if character vector is in year month date, yyyy-mm-dd then lubridate function is ymd()
+    --> if character vector is in day month year format, dd-mm-yyy, lubridate function is dmy()
+
+Using date time functions in lubridate warning
+  --> R functions tend to use the timezone of YOUR computer’s operating system by default—or UTC, or GMT. You need to be careful when working with dates and times to either specify the time zone or convince yourself the default behavior works for your application
+
 

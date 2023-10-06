@@ -35,13 +35,16 @@ Within a pipeline using the Colorado-only tweet data, select `text` variable
 and use `stringr::str_extract_all()` with a pattern of `"#(\\d|\\w)+"` to
 extract all of the hashtags from the tweets. This will return a list with one
 element. How many hashtags were used by Colorado senators?
+  --> 5436 hashtags
 
 ```{r hashtags}
 # wildfire hashtag list
 library(tidyverse)
 library(stringr)
-csv_path <- "/Users/Reyland-MECH476/data/senators_co.csv"
-
+csv_path <- "/Users/genevieve/Reyland-MECH476/data/senators_co.csv"
+senators_data <- readr::read_csv(file = csv_path)
+hashtags <- stringr::str_extract_all(string = senators_data$text,
+                                     pattern = "#(\\d|\\w)+")
 ```
 
 ## Question 2: Fires
@@ -51,8 +54,14 @@ Let's examine senators' tweet activity related to wildfires based on hashtags.
 Using the character vector of hashtags you extracted in Question 1, search for
 the hashtags that include "fire" or "wildfire". How many hashtags included
 "fire"? How many included "wildfire"?
+  --> There are 16 hashtags that include the word fire. There are 8 hashtags that include the word wildfire.  
 
 ```{r hashtag-fire}
+hashtag_fire <- stringr::str_subset(string = hashtags,
+                                    pattern = "fire")
+hashtag_wilfire <- stringr::str_subset(string = hashtags,
+                                       pattern = "wildfire")
+                    
 ```
 
 ## Question 3: Wildfires 
@@ -63,8 +72,15 @@ corresponding timestamp and user. Specifically, (a) select `text`, `date`, and
 `user` and (b) filter to text strings that include the word "wildfire" using
 `dplyr::filter()` and `stringr::str_detect()`.
 
-```{r wildfire}
+```{r wildfire} LOOK AT EXERCISES FOR HELP IF NEEDED
 # filter to tweets concerning wildfires
+tweets <- tibble::tibble(text = senators_data$text,
+                           date = senators_data$created_at,
+                           user = senators_data$user)
+wildfire <- stringr::str_detect(string = hashtags,
+                                pattern = "wildfire")
+wildfire_tweets <- tweets %>%
+  dplyr::filter(wildfire = TRUE)
 ```
 
 ## Question 4: Senators

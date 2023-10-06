@@ -68,5 +68,96 @@ stringr::str_replace(string = q1_responses,
 ``` {r dates and date-times}
 # using the current system time 
 Sys.time()
+class(Sys.time())
 
+time_now_ct <- as.POSIXct(Sys.time())
+unclass(time_now_ct)
+time_now_lt <- as.POSIXlt(Sys.time())
+str(unclass(time_now_lt)) # the `str()` function makes the output more compact
+```
+
+Parsing Functions
+``` {r lubridate}
+# pasrse means to break apart and analyze individual components
+# create a character vector
+date_old <- "2020-Dec-18"
+
+# prove it's a character class
+class(date_old)
+
+# convert it to a `Date` class with `ymd()`
+date_new <- lubridate::ymd(date_old)
+
+# prove it worked
+class(date_new)
+
+messy_dates <- c("2020------Dec the 12",
+                 "20.-.12.-.12",
+                 "2020aaa12aaa12",
+                 "20,12,12",
+                 "2020x12-12",
+                 "2020   ....    12        ......     12",
+                 "'20.December-12")
+ymd(messy_dates)
+```
+
+``` {r daily show date time manipulation}
+csv_path1 <- "/Users/genevieve/Reyland-MECH476/data/daily_show_guests.csv"
+library(package = "lubridate")
+
+daily_show <- readr::read_csv(file = csv_path1, skip = 4) %>% 
+  mutate(date = mdy(Show)) %>%
+  select(-YEAR, -Show)
+
+# report the min and max dates
+range(daily_show$date)
+
+# calculate the duration from first to last date using base
+max(daily_show$date) - min(daily_show$date)
+
+# transform and clean data 
+daily_show <- readr::read_csv(file = csv_path1,
+                              skip = 4) %>%
+  dplyr::rename(job = GoogleKnowlege_Occupation,
+                date = Show,
+                category = Group,
+                guest_name = Raw_Guest_List) %>%
+  dplyr::select(-YEAR) %>%
+  dplyr::mutate(date = lubridate::mdy(date)) %>%
+  dplyr::filter(category == "Science")
+
+# show first two rows of dataframe
+head(x = daily_show, n = 2)
+
+# using more libridate packages like weekday - wday, month day - mday, yday, month, quarter, or year *Note, if not specified, R will use your own timeszone so if data is not collected in own timezone, it won't be correct. 
+daily_show %>% 
+  dplyr::mutate(show_day = lubridate::wday(x = date,
+                                           label = TRUE)) %>%
+  dplyr::select(date, show_day, guest_name) %>%
+  dplyr::slice(1:5)
+```
+
+``` {r tidy data}
+# function called picot will re-arrange dataframes from untidy (wide) to tidy (long)
+# requires 4 arguments, data, cols, names_to, and values_to
+
+# make untidy data fram
+grades_untidy <- tibble::tibble(
+  Name = c("Harry", "Ron", "Hermione"),
+  Exam1_Score = c(85, 81, 95),
+  Exam2_Score = c(79, 75, 97),
+  Exam3_Score = c(88, 89, 99)
+  ) 
+
+# make tidy - names_to is the name of a new column, values to is the name of a new column, essentially splitting up one column with two definers (score and exam number) and splitting it up (exam number, and score per exam number) grades is values_to because it's with respect to the names_to (exam)
+tidygrades <- tidyr::pivot_longer(data = grades_untidy,
+                                  cols = Exam1_Score:Exam3_Score,
+                                  names_to = "Exam",
+                                  values_to = "Scores") %>%
+  # rename the exam column with the type of names_to (exam) so Exam 1 can be just 1. case_when is basically if else, so if Exam = Exam1_Score, then replace with mutate (~) 1, else ... 
+  dplyr::mutate(Exam = dplyr::case_when(
+    Exam == "Exam1_Score" ~ 1,
+    Exam == "Exam2_Score" ~ 2,
+    Exam == "Exam3_Score" ~ 3
+  ))
 ```
