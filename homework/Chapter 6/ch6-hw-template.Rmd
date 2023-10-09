@@ -74,17 +74,24 @@ corresponding timestamp and user. Specifically, (a) select `text`, `date`, and
 
 ```{r wildfire} 
 # filter to tweets concerning wildfires
-senators_data %>%
-  dplyr::group_by(user, lubridate::year(date)) %>%
-  dplyr::filter(stringrLLstr_detect(text, "wildfire"))
+wildfire <- senators_data %>%
+  dplyr::group_by(text, created_at, user) %>%
+  dplyr::filter(stringr::str_detect(text, "wildfire")) %>%
+  dplyr::tally() %>%
+  dplyr::ungroup()
 ```
 
 ## Question 4: Senators
 
 Which Colorado senator tweets more about wildfires? 
+  --> Senator Bennet tweets more about wildfires at 20 tweets whereas Cory Gardner tweeted 13 times about wildfires. 
 
 ```{r wildfire-senator}
 # number of wildfire tweets by senator
+wildfire %>%
+  dplyr::group_by(user) %>%
+  dplyr::tally() %>%
+  dplyr::ungroup()
 ```
 
 ## Question 5: Timing
@@ -93,9 +100,16 @@ Using the same `wildfires` dataframe, create a summary table that shows the
 number of tweets containing the word "wildfire" by year (2011-2017). Which year
 has the most tweets about wildfires? Why might this be the case? (Hint: Think
 about what happened in the previous year.)
+  --> 2013 had the most tweets about wildfires. Considering I was 11 most of 
 
 ```{r wildfire-timing}
 # number of wildfire tweets by year 
+wildfire_timing <- wildfire %>% 
+  dplyr::mutate(date = lubridate::mdy_hm(created_at),
+                year = lubridate::year(date)) %>%
+  dplyr::group_by(user, year) %>%
+  dplyr::tally() %>%
+  dplyr::ungroup()
 ```
 
 \newpage
@@ -107,6 +121,7 @@ at a certain time of year? Hints: Convert `month` to a factor. Fill by `user`.
 
 ```{r tweet-count-month}
 # create plot of tweets by month and user
+
 ```
 
 \newpage
