@@ -43,7 +43,7 @@ library(tidyverse)
 library(stringr)
 csv_path <- "/Users/genevieve/Reyland-MECH476/data/senators_co.csv"
 senators_data <- readr::read_csv(file = csv_path)
-hashtags <- stringr::str_extract_all(string = senators_data$text,
+hashtags <- stringr::str_extract_all(string = senators_data$text, 
                                      pattern = "#(\\d|\\w)+")
 ```
 
@@ -72,15 +72,11 @@ corresponding timestamp and user. Specifically, (a) select `text`, `date`, and
 `user` and (b) filter to text strings that include the word "wildfire" using
 `dplyr::filter()` and `stringr::str_detect()`.
 
-```{r wildfire} LOOK AT EXERCISES FOR HELP IF NEEDED
+```{r wildfire} 
 # filter to tweets concerning wildfires
-tweets <- tibble::tibble(text = senators_data$text,
-                           date = senators_data$created_at,
-                           user = senators_data$user)
-wildfire <- stringr::str_detect(string = hashtags,
-                                pattern = "wildfire")
-wildfire_tweets <- tweets %>%
-  dplyr::filter(wildfire = TRUE)
+senators_data %>%
+  dplyr::group_by(user, lubridate::year(date)) %>%
+  dplyr::filter(stringrLLstr_detect(text, "wildfire"))
 ```
 
 ## Question 4: Senators
