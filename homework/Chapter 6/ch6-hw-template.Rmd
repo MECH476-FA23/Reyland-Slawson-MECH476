@@ -75,10 +75,8 @@ corresponding timestamp and user. Specifically, (a) select `text`, `date`, and
 ```{r wildfire} 
 # filter to tweets concerning wildfires
 wildfire <- senators_data %>%
-  dplyr::group_by(text, created_at, user) %>%
-  dplyr::filter(stringr::str_detect(text, "wildfire")) %>%
-  dplyr::tally() %>%
-  dplyr::ungroup()
+  dplyr::select(text, created_at, user) %>% 
+  dplyr::filter(stringr::str_detect(text, "wildfire"))
 ```
 
 ## Question 4: Senators
@@ -97,10 +95,8 @@ wildfire %>%
 ## Question 5: Timing
 
 Using the same `wildfires` dataframe, create a summary table that shows the 
-number of tweets containing the word "wildfire" by year (2011-2017). Which year
-has the most tweets about wildfires? Why might this be the case? (Hint: Think
-about what happened in the previous year.)
-  --> 2013 had the most tweets about wildfires. Considering I was 11 most of 
+number of tweets containing the word "wildfire" by year (2011-2017). Which year has the most tweets about wildfires? Why might this be the case? (Hint: Think about what happened in the previous year.)
+  --> 2013 had the most tweets about wildfires. Considering I was 11 most of year, I didn't pay attention to the news. Looking up fires in 2012, there were 7,950 fires in California which includes the Rush fire which is rated one of California's top 10 fires. This is most likely why there were a lot of tweets in 2013 reflecting on these fires and keeping up with rebuilding through the following year. 
 
 ```{r wildfire-timing}
 # number of wildfire tweets by year 
@@ -121,18 +117,53 @@ at a certain time of year? Hints: Convert `month` to a factor. Fill by `user`.
 
 ```{r tweet-count-month}
 # create plot of tweets by month and user
+month_tweets <- senators_data %>%
+  dplyr::select(text, created_at, user) %>%
+  dplyr::mutate(date = lubridate::mdy_hm(created_at),
+                month = lubridate::month(date)) %>%
+  dplyr::group_by(month, user) %>%
+  dplyr::tally() %>%
+  dplyr::ungroup()
 
+library(ggplot2)
+ggplot(data = month_tweets,
+       mapping = aes(x = month,
+                     y = n,
+                     fill = user)) + 
+  geom_bar(stat = "identity",
+           position = "dodge") +
+  labs(x = "Month",
+       y = "Number of Tweets", 
+       title = "Number of tweets by senator per month") +
+  scale_x_continuous(breaks = seq(from = 0, 
+                                  to = 12,
+                                  by = 1))
+theme_classic()
 ```
 
 \newpage
 
 ## Question 7: Hourly tweets
 
-Create a histogram of tweets by hour of day to visualize when our senators are
-tweeting. 
+Create a histogram of tweets by hour of day to visualize when our senators are tweeting. 
 
 ```{r tweet-count-hour}
-# create plot of cumulative hourly tweets by senator
+hour_tweets <- senators_data %>%
+  dplyr::select(text, created_at, user) %>%
+  dplyr::mutate(date = lubridate::mdy_hm(created_at),
+                hour = lubridate::hour(date))
+
+ggplot(hour_tweets,
+       aes(x = hour)) + 
+  geom_histogram(binwidth = 1) + 
+  labs(title = "Number of Tweets by Hour",
+       x = "Hour of the day",
+       y = "Number of Tweets") + 
+  scale_x_continuous(breaks = seq(from = 0,
+                                  to = 24,
+                                  by = 1))
+  theme_minimal()
+
 ```
 
 \newpage
