@@ -9,14 +9,15 @@ output: html_document
 ```{r global-options, include=FALSE}
 # set global options for figures, code, warnings, and messages
 knitr::opts_chunk$set(fig.width=6, fig.height=4, fig.path="../figs/",
-                      echo=FALSE, warning=FALSE, message=FALSE)
+                      echo=TRUE, warning=FALSE, message=FALSE)
 ```
 
 # Load packages
 
 ```{r load-packages, message=FALSE}
 # load packages for current session
-
+library(tidyverse)
+salaries_path <- "/Users/genevieve/Reyland-MECH476/data/ME_Salaries.csv"
 ```
 
 # Chapter 7 Homework

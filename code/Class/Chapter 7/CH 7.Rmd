@@ -1,0 +1,94 @@
+---
+title: 'Chapter 7 Class Code'
+subtitle: 'Code from class modeling chapter 7 concepts' 
+author: 'Genevieve Reyland-Slawson'
+date: '`r format(Sys.time(), "%d %B, %Y")`'
+output: html_document
+---
+
+```{r global-options, include = FALSE}
+# set global options for figures, code, warnings, and messages
+knitr::opts_chunk$set(fig.width = 6, fig.height = 4, fig.path = "../figs/",
+                      echo = TRUE, warning = FALSE, message = FALSE)
+```
+
+``` {r import packages}
+library(tidyverse)
+library(ggplot2)
+```
+``` {r facets}
+# ggplot2::facet() is an easy way to evaluate two or more variables to create multiple plots (or facets) within the function. 
+# fit a linear model; the ~ means we are modeling mpg as "y" and wt as "x"
+g1_model <- lm(mpg ~ wt, data = mtcars)
+# create a plot, assign it to an object named `g1`
+g1 <- ggplot2::ggplot(data = mtcars, 
+                      mapping = aes(x = wt, 
+                                    y = mpg)) + 
+  geom_point() +
+  geom_smooth(model = g1_model, 
+              method = "lm") + 
+  ylab("Fuel Economy (mi/gal)") +
+  xlab("Vehicle Weight (x1000 lb)") +
+  theme_bw(base_size = 14)
+g1
+
+# facet previous plot by `cyl` columns and retain labels
+g1 + facet_grid(cols = vars(cyl),
+                labeller = label_both) # label each panel w/ variable name & value
+
+# facet previous plot by`cyl` in rows and retain labels
+g1 + facet_grid(rows = vars(cyl),
+                labeller = label_both)
+```
+
+``` {r colors}
+# instruct R to treat the `cyl` variable as a factor with discrete levels
+# this, in turn, tells ggplot2 to assign discrete colors to each level
+# `cyl` as a factor with four levels
+mtcars$cyl <- as.factor(mtcars$cyl)
+# recreate previous plot with color option
+g3 <- ggplot2::ggplot(data = mtcars,
+                      mapping = aes(x = wt, 
+                           y = mpg, 
+                           color = cyl)) + 
+  geom_point() +
+  ylab("Fuel Economy (mi/gal)") +
+  xlab("Vehicle Weight (x1000 lb)") +
+  theme_bw(base_size = 14)
+# call plot
+g3
+
+# recreate previous plot with color-blind-friendly colors and shapes
+ggplot2::ggplot(data = mtcars,
+                mapping = aes(x = wt,
+                              y = mpg,
+                              color = cyl, 
+                              shape = cyl)) + # distinguish by shape also!
+  geom_point(size = 2.5) +
+  ylab("Fuel Economy (mi/gal)") +
+  xlab("Vehicle Weight (x1000 lb)") +
+  scale_colour_manual(values = c("sandybrown", # color-blind-friendly colors
+                                 "orangered", 
+                                 "steelblue2")) +
+  theme_bw(base_size = 14)
+```
+
+``` {r ch 7 exercises} 
+# create an empty temporary object to hold the zipped data
+temp <- base::tempfile()
+# download the file into temp object
+utils::download.file(
+  url = "https://www.fueleconomy.gov/feg/epadata/vehicles.csv.zip",
+  destfile = temp,
+  mode="wb")
+# unzip the folder within temp object to acess csv
+temp2 <- utils::unzip(temp, 
+                      "vehicles.csv", 
+                      exdir = "./data/") # unzip .csv to local directory
+# import csv into df object
+raw_data <- readr::read_csv(temp2) #read the csv into a data frame
+# delete the temp file
+base::unlink(temp) 
+# remove the two temp objects from local environment
+base::rm(temp, temp2) 
+```
