@@ -16,6 +16,7 @@ knitr::opts_chunk$set(fig.width = 6, fig.height = 4, fig.path = "../figs/",
 library(tidyverse)
 library(ggplot2)
 ```
+# Multiple Plots and Facets
 ``` {r facets}
 # ggplot2::facet() is an easy way to evaluate two or more variables to create multiple plots (or facets) within the function. 
 # fit a linear model; the ~ means we are modeling mpg as "y" and wt as "x"
@@ -40,7 +41,7 @@ g1 + facet_grid(cols = vars(cyl),
 g1 + facet_grid(rows = vars(cyl),
                 labeller = label_both)
 ```
-
+# Plots Variables
 ``` {r colors}
 # instruct R to treat the `cyl` variable as a factor with discrete levels
 # this, in turn, tells ggplot2 to assign discrete colors to each level
@@ -72,8 +73,8 @@ ggplot2::ggplot(data = mtcars,
                                  "steelblue2")) +
   theme_bw(base_size = 14)
 ```
-
-``` {r ch 7 exercises} 
+# Download New Data
+``` {r exercises import data} 
 # create an empty temporary object to hold the zipped data
 temp <- base::tempfile()
 # download the file into temp object
@@ -91,4 +92,75 @@ raw_data <- readr::read_csv(temp2) #read the csv into a data frame
 base::unlink(temp) 
 # remove the two temp objects from local environment
 base::rm(temp, temp2) 
+```
+# Clean Data
+``` {r clean data}
+# create a vector of var names to retain 
+vars_needed <- c("id",
+                 "make",
+                 "model",
+                 "year",
+                 "cylinders", 
+                 "displ", 
+                 "drive",
+                 "trany",
+                 "VClass",
+                 "fuelType1",
+                 "comb08",
+                 "highway08",
+                 "city08")
+# select necessary variables
+df_mpg <- raw_data %>%
+  dplyr::select(tidyselect::all_of(vars_needed))  
+# remove full dataframe from environment
+rm(raw_data) 
+
+# identify the columns that we want to convert to a factor
+vars_factr <- c("make", "drive", "trany", "VClass", "fuelType1")
+# overwrite existing df
+df_mpg <- df_mpg %>% 
+  # convert select vars to factors 
+  dplyr::mutate(dplyr::across(tidyselect::all_of(vars_factr), 
+                              .fns = as.factor)) %>% 
+  # overwrite column names with simpler names
+  dplyr::rename(fuel_type = fuelType1, 
+                cyl = cylinders, 
+                tran = trany, 
+                v_class = VClass) %>% # easier string to type
+  # keep only data collected after 2000 for the sake of simplicity
+  dplyr::filter(year >= 2000) 
+# remove previous objects from global environment
+rm(vars_needed, vars_factr)
+```
+
+# Check Data
+``` {r check data}
+## checking data for each type
+# examine first five rows of df
+head(df_mpg)
+
+# print a character vector of levels for the drive variable in df_mpg
+levels(df_mpg$drive) 
+
+# print a character vector of levels for the fuel_type variable in df_mpg
+levels(df_mpg$fuel_type) 
+
+# print a character vector of levels for the v_class variable in df_mpg
+levels(df_mpg$v_class) 
+
+## look for missing data like NAs
+# count instances of missing values within df_mpg
+mean(df_mpg$cyl)
+# this returns NA because there are some electric vehicles have no cyclinders. Could use 0 cylinders but could also be confusing to some people so NA was used. 
+
+sum(is.na(df_mpg)) 
+# will return how many NA values are in the data frame --> 1192
+# can also use a pipe, df_mpg %>% is.na %>% sum()
+
+# complete.cases() is a function that returns a logical vector showing which rows are complete (no mising values)
+# return a df of rows with missing values 
+df_mpg %>% 
+  filter(!complete.cases(.))
+# dot acts as a placeholder argument when more than one function is nested iwthin a single seciton of pipe
+
 ```
