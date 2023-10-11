@@ -54,6 +54,7 @@ Let's examine senators' tweet activity related to wildfires based on hashtags.
 Using the character vector of hashtags you extracted in Question 1, search for
 the hashtags that include "fire" or "wildfire". How many hashtags included
 "fire"? How many included "wildfire"?
+  
   --> There are 16 hashtags that include the word fire. There are 8 hashtags that include the word wildfire.  
 
 ```{r hashtag-fire}
@@ -82,6 +83,7 @@ wildfire <- senators_data %>%
 ## Question 4: Senators
 
 Which Colorado senator tweets more about wildfires? 
+  
   --> Senator Bennet tweets more about wildfires at 20 tweets whereas Cory Gardner tweeted 13 times about wildfires. 
 
 ```{r wildfire-senator}
@@ -96,6 +98,7 @@ wildfire %>%
 
 Using the same `wildfires` dataframe, create a summary table that shows the 
 number of tweets containing the word "wildfire" by year (2011-2017). Which year has the most tweets about wildfires? Why might this be the case? (Hint: Think about what happened in the previous year.)
+  
   --> 2013 had the most tweets about wildfires. Considering I was 11 most of year, I didn't pay attention to the news. Looking up fires in 2012, there were 7,950 fires in California which includes the Rush fire which is rated one of California's top 10 fires. This is most likely why there were a lot of tweets in 2013 reflecting on these fires and keeping up with rebuilding through the following year. 
 
 ```{r wildfire-timing}
