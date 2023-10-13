@@ -1,0 +1,5 @@
+"0","# create base layer of ozone time series (no geom) and save to object"
+"0","ozone_ggplot <- ggplot(ozone_data, "
+"0","                          aes(x = datetime,"
+"0","                              y = ozone_ppm,"
+"0","                              alpha = 0.2))"

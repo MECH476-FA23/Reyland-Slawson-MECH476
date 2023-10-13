@@ -1,0 +1,31 @@
+"0","theme_bw"
+"1","function (base_size = 11, base_family = """", base_line_size = base_size/22, 
+"
+"1","    base_rect_size = base_size/22) 
+"
+"1","{
+"
+"1","    theme_grey(base_size = base_size, base_family = base_family, 
+"
+"1","        base_line_size = base_line_size, base_rect_size = base_rect_size) %+replace% 
+"
+"1","        theme(panel.background = element_rect(fill = ""white"", 
+"
+"1","            colour = NA), panel.border = element_rect(fill = NA, 
+"
+"1","            colour = ""grey20""), panel.grid = element_line(colour = ""grey92""), 
+"
+"1","            panel.grid.minor = element_line(linewidth = rel(0.5)), 
+"
+"1","            strip.background = element_rect(fill = ""grey85"", 
+"
+"1","                colour = ""grey20""), legend.key = element_rect(fill = ""white"", 
+"
+"1","                colour = NA), complete = TRUE)
+"
+"1","}
+"
+"1","<bytecode: 0x7fb029151358>
+"
+"1","<environment: namespace:ggplot2>
+"

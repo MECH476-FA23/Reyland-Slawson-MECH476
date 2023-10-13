@@ -1,0 +1,2 @@
+"0","# add theme to ggplot object"
+"0","ozone_ggplot <- ozone_ggplot + theme_classic()"

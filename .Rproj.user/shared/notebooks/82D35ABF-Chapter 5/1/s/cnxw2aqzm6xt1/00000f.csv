@@ -1,0 +1,23 @@
+"0","csv_path <- ""/Users/genevieve/Reyland-MECH476/data/NOAA_temps_cleaned.csv"""
+"0","noaa_temp <- readr::read_csv(file = csv_path)"
+"2","[1mRows: [22m[34m1486[39m [1mColumns: [22m[34m4[39m"
+"2","[36m──[39m [1mColumn specification[22m [36m───────────────────────────────────────────────────────────[39m
+[1mDelimiter:[22m "",""
+[31mchr[39m  (2): station, location
+[32mdbl[39m  (1): temp_hr_f
+[34mdttm[39m (1): date"
+"2","
+[36mℹ[39m Use `spec()` to retrieve the full column specification for this data.
+[36mℹ[39m Specify the column types or set `show_col_types = FALSE` to quiet this message."
+"0","ggplot(data = noaa_temp,"
+"0","       mapping = aes(x = temp_hr_f, "
+"0","                     y = location, "
+"0","                     fill = location)) +"
+"0","  geom_boxplot() +"
+"0","  geom_jitter(height = 0.25,"
+"0","              alpha = 0.2,"
+"0","              shape = ""circle filled"","
+"0","              color = ""black"") +"
+"0","  labs(y = ""Region"","
+"0","       x = ""Temperature (°F)"") +"
+"0","  theme_bw() "

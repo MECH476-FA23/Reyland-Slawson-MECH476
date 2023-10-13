@@ -1,0 +1,6 @@
+"0","#creating a histogram"
+"0","ggplot(data = data_raw) + "
+"0","  geom_histogram(aes(x = salary),"
+"0","                 bins = 50, "
+"0","                 color = ""purple"") + "
+"0","  xlim(0 ,500000)"

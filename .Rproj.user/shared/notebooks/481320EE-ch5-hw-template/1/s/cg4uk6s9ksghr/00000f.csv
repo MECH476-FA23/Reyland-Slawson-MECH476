@@ -1,0 +1,8 @@
+"0","# ozone: import, select, drop missing observations, rename"
+"0",""
+"0","# Read the CSV file using the relative path"
+"0","  ozone_data <- readr::read_csv(file = csv_path) %>%"
+"0","    dplyr::select(sample_measurement,"
+"0","                  datetime) %>%"
+"0","    drop_na() %>%"
+"0","    dplyr::rename(ozone_ppm = sample_measurement)"

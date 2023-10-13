@@ -1,0 +1,3 @@
+"0","# set global options for figures, code, warnings, and messages"
+"0","knitr::opts_chunk$set(fig.width = 6, fig.height = 4, fig.path = ""../figs/"","
+"0","                      echo = TRUE, warning = FALSE, message = FALSE)"

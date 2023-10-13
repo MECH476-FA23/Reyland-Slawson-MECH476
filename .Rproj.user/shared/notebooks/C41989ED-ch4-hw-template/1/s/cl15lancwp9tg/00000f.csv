@@ -1,0 +1,4 @@
+"0","# add title and axis labels to time series"
+"0","ozone_ggplot <- ozone_ggplot + labs(x = ""Date Time"","
+"0","                                    y = ""Ozone Concentration (ppm)"","
+"0","                                    title = ""Ozone Measurements in Fort Collins by Hour"")"

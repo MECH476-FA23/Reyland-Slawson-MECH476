@@ -1,0 +1,3 @@
+"0","# add layer to ggplot object"
+"0","ozone_ggplot <- ozone_ggplot + geom_point()"
+"0","ozone_ggplot"

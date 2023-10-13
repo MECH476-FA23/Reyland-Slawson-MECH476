@@ -1,0 +1,4 @@
+"0","# filter to tweets concerning wildfires"
+"0","wildfire <- senators_data %>%"
+"0","  dplyr::select(text, created_at, user) %>% "
+"0","  dplyr::filter(stringr::str_detect(text, ""wildfire""))"

@@ -1,0 +1,6 @@
+"0","# filter to tweets concerning wildfires"
+"0","wildfire <- senators_data %>%"
+"0","  dplyr::group_by(text, created_at, user) %>%"
+"0","  dplyr::filter(stringr::str_detect(text, ""wildfire"")) %>%"
+"0","  dplyr::tally() %>%"
+"0","  dplyr::ungroup()"

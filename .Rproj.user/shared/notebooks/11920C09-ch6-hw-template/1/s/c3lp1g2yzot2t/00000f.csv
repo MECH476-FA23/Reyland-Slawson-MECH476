@@ -1,0 +1,7 @@
+"0","hashtag_fire <- stringr::str_subset(string = hashtags,"
+"0","                                    pattern = ""fire"")"
+"2","Warning: argument is not an atomic vector; coercing"
+"0","hashtag_wilfire <- stringr::str_subset(string = hashtags,"
+"0","                                       pattern = ""wildfire"")"
+"2","Warning: argument is not an atomic vector; coercing"
+"0","                    "

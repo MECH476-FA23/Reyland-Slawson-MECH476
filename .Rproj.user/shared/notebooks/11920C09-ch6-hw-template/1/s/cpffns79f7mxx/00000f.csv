@@ -1,0 +1,7 @@
+"0","# number of wildfire tweets by year "
+"0","wildfire_timing <- wildfire %>% "
+"0","  dplyr::mutate(date = lubridate::mdy_hm(created_at),"
+"0","                year = lubridate::year(date)) %>%"
+"0","  dplyr::group_by(user, year) %>%"
+"0","  dplyr::tally() %>%"
+"0","  dplyr::ungroup()"

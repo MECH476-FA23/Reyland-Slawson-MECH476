@@ -1,0 +1,17 @@
+"0","  # rename the exam column with the type of names_to (exam) so Exam 1 can be just 1. 
+  dplyr::mutate(Exam = dplyr::case_when(
+    Exam == ""Exam1_Score"" ~ 1,
+    Exam == ""Exam2_Score"" ~ 2,
+    Exam == ""Exam3_Score"" ~ 3
+  ))
+"
+"1","[1m[33mError[39m in `dplyr::case_when()`:[22m
+[38;5;232m[33m![38;5;232m Failed to evaluate the left-hand side of formula 1.[39m
+[1mCaused by error:[22m
+[33m![39m object 'Exam' not found
+Backtrace:
+[90m 1. [39m[1mdplyr[22m::mutate(...)
+[90m 2. [39m[1m[94mdplyr::case_when([39m[22m...[1m[94m)[39m[22m
+[90m 3. [39mdplyr:::case_formula_evaluate(...)
+[90m 5. [39m[1mrlang[22m::eval_tidy(pair$lhs, env = default_env)
+"

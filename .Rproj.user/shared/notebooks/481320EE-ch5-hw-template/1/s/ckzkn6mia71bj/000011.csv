@@ -1,0 +1,5 @@
+"0","# create partial autocorrelation plot"
+"0","ozone_part_acf <-stats::pacf(ozone_day$ozone_ppm,"
+"0","                             main = ""Partial autocorrelation of Ozone levels in Fort Collins from January 2019 to January 2020"","
+"0","                             xlab = ""Lag (hours)"","
+"0","                             ylab = ""Correlation Coefficient"")"

@@ -1,0 +1,3 @@
+"0","# add alpha aesthetic to the geom_point()"
+"0","ozone_ggplot <- ozone_ggplot + aes(alpha = 0.2)"
+"0","ozone_ggplot"

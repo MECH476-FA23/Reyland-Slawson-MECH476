@@ -1,0 +1,23 @@
+"0","# ozone: import, select, drop missing observations, rename"
+"0","# Specify the relative path to the CSV file"
+"0",""
+"0","csv_path <- ""/Users/genevieve/Reyland-MECH476/data/ftc_o3.csv"""
+"0",""
+"0","# Read the CSV file using the relative path"
+"0","  ozone_data <- readr::read_csv(file = csv_path) %>%"
+"0","    dplyr::select(sample_measurement,"
+"0","                  datetime) %>%"
+"0","    drop_na() %>%"
+"0","    dplyr::rename(ozone_ppm = sample_measurement)"
+"2","[1mRows: [22m[34m17520[39m [1mColumns: [22m[34m30[39m"
+"2","[36m──[39m [1mColumn specification[22m [36m──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────[39m
+[1mDelimiter:[22m "",""
+[31mchr[39m  (15): state_code, county_code, site_number, datum, parameter, units_of_measure, units_of_measure_code, sample_duration, sample_frequency, qualifier, method_type, method,...
+[32mdbl[39m   (8): parameter_code, poc, latitude, longitude, sample_measurement, sample_duration_code, detection_limit, cbsa_code
+[33mlgl[39m   (1): uncertainty
+[34mdttm[39m  (1): datetime
+[34mdate[39m  (3): date_local, date_gmt, date_of_last_change
+[34mtime[39m  (2): time_local, time_gmt"
+"2","
+[36mℹ[39m Use `spec()` to retrieve the full column specification for this data.
+[36mℹ[39m Specify the column types or set `show_col_types = FALSE` to quiet this message."

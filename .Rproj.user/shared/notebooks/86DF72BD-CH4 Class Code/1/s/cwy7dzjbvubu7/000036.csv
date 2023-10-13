@@ -1,0 +1,8 @@
+"0","mpg <- mpg"
+"0","ggplot(mpg) + "
+"0","  geom_point(aes(x = cty,"
+"0","                 y = hwy, "
+"0","                 color = class)) + "
+"0","  xlab(""City miles per gallon, mi/g"") +"
+"0","  ylab(""highway miles per gallon (miles/gallon)"") + "
+"0","  ggtitle(""Model Year 1999 & 2008 Comparison Point"")"

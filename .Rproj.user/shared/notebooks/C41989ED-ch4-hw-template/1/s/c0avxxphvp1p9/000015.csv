@@ -1,0 +1,4 @@
+"0","plot(x = ozone_data$datetime, "
+"0","     y = ozone_data$ozone_ppm,"
+"0","     xlab = ""datetime"","
+"0","     ylab = ""ozone_ppm"")"

@@ -1,0 +1,7 @@
+"0","# calculate proportion of ozone measurements that exceed 0.070 ppm "
+"0","ozone_perc <- (nrow(high_ozone) / nrow(ozone_data))*100"
+"0","print(paste(round(ozone_perc, digits = 3), ""% exceeding 0.070 ppm"")) # percentage of measurements that exceed 0.07 ppm"
+"1","[1]"
+"1"," ""0.503 % exceeding 0.070 ppm"""
+"1","
+"

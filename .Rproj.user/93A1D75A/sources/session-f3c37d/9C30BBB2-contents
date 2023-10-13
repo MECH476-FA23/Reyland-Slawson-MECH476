@@ -1,0 +1,263 @@
+---
+title: 'MECH481A6: Engineering Data Analysis in R'
+subtitle: 'Chapter 5 Homework: Exploring Univariate Data' 
+author: 'Student Name'
+date: '`r format(Sys.time(), "%d %B, %Y")`'
+output: html_document
+---
+
+```{r global-options, include = FALSE}
+# set global options for figures, code, warnings, and messages
+knitr::opts_chunk$set(fig.width = 6, fig.height = 4, fig.path = "../figs/",
+                      echo = TRUE, warning = FALSE, message = FALSE)
+```
+
+# Grading
+
+We will grade the **knitted** PDF or HTML document from within your private
+GitHub repository. Remember to make regular, small commits (e.g., at least one
+commit per question) to save your work. We will grade the latest knit, as long
+as it occurs *before* the start of the class in which we advance to the next
+chapter. As always, reach out with questions via GitHub Issues or during
+office hours.
+
+# Data
+
+You are probably sick of seeing the ozone data, but there's still more to
+do with the file. Ozone concentration measurement is considered univariate,
+thus we can use basic exploratory data analysis approaches to examine the data.
+
+# Preparation
+
+Load the necessary R packages into your R session. 
+
+```{r packages, message=FALSE}
+# load packages
+library(tidyverse)
+library(knitr)
+library(ggplot2)
+
+csv_path <- "/Users/genevieve/Reyland-MECH476/data/ftc_o3.csv"
+# I cannot get the ../../Reyland-MECH476/data/ft_o3.csv to work in the readr::read_csv(file=) I've tried moving the file elsewhere too but it doesn't work. This csv_path works for me and it's not too much extra work. I'm not sure what's going wrong. It worked in ch3 but stopped in ch4 and then wouldn't run in ch3 again after I submitted. 
+```
+
+Recreate the pipe of `dplyr` functions that you used to import the data, select
+and rename the variables listed below, drop missing observations, and assign the
+output with a good name.
+
+- `sample_measurement` renamed as `ozone_ppm` (ozone measurement in ppm)
+- `datetime` (date in YYYY-MM-DD format and time of measurement in HH:MM:SS)
+
+```{r import-data, message=FALSE}
+# ozone: import, select, drop missing observations, rename
+
+# Read the CSV file using the relative path
+  ozone_data <- readr::read_csv(file = csv_path) %>%
+    dplyr::select(sample_measurement,
+                  datetime) %>%
+    drop_na() %>%
+    dplyr::rename(ozone_ppm = sample_measurement)
+```
+
+Check that the data imported correctly.
+
+```{r data-check}
+# examine dataframe object 
+ozone_data
+```
+
+\newpage
+
+# Chapter 5 Homework: Exploring Univariate Data
+
+Through Question 5, you will use all of the available ozone measurements
+from January 2019 through January 2020. Starting in Question 6, you will use
+a subset of the dataset: ozone concentration measurements on July 4, 2019.
+
+## Question 1: Definitions
+
+Guess the location, dispersion, and shape of ozone concentration data, based on
+the definitions of each described in the coursebook. No code needed; just use
+your intuition. For shape, take a look at the coursebook appendix on reference
+distributions.
+  --> Based on the data, I assume this data will look like an increase as the ozone will most likely increase as the months go on and as people start driving more in the summer months. Then they'll decrease when the weather gets cooler again. The amount of ozone might increase over the year as the number of cars on the road has only increased but will probably go down a little as the year goes on and people travel less. 
+
+## Question 2: Quartiles
+
+Calculate the quartiles of `ozone_ppm`. What is the minimum? Maximum? Median? 
+
+```{r ozone-quartiles}
+# calculate quantiles of ozone concentration
+set.seed(1)
+ozone_dist <- runif(n = 1000, 
+                    min = 0, 
+                    max = 100)
+ozone_quart <- quantile(ozone_dist,
+                        probs = seq(0,1,0.25)) %>%
+  round(1)
+```
+
+### Extra Credit
+
+Create [a similar table](https://smogdr.github.io/edar_coursebook/eda1.html#descriptive-statistics) for `ozone_ppm`. Hint: You will need to investigate table
+options in the `knitr` package.
+
+\newpage
+
+## Question 3: Cumulative Distribution Plot
+
+Using either relevant `ggplot2` `geom` option, create a cumulative distribution
+plot of `ozone_ppm`. Tweak the axis ranges for optimal data representation,
+using `scale_*_continuous()` with `breaks =` and `minor_breaks =` arguments.
+Add axis labels, title, subtitle, and theme. 
+
+```{r ozone-cd}
+# plot cumulative distribution of ozone concentration
+ozone_date <- as.Date(ozone_data$datetime)
+ggplot(data = ozone_data) + 
+  geom_step(aes(x = ozone_date),
+                stat = "ecdf") + 
+  labs(x = "Month",
+       y = "Ozone ppm",
+       title = "Cumulative Distribution Plot of Ozone ppm vs Month",
+       subtitle = "Ozone levels in Fort Collins between January 2019 and January 2020") +
+  scale_y_continuous(limits = c(-0.05, 1.05),
+                     expand = c(0,0),
+                     breaks = seq(from = 0,
+                                  to = 1, 
+                                  by = 0.1)) + 
+  scale_x_date(date_breaks = "months" , date_labels = "%b-%y") + 
+  theme_bw()
+```
+
+\newpage
+
+## Question 4: Histogram
+
+Create a histogram of `ozone_ppm`. Within the `geom`, mess with the number of
+bins (e.g., 20, 50, 75, 100, 200) to explore the true shape and granularity of
+the data. Match the plot style (e.g., title, subtitle, axis labels, theme) you
+chose in Question 3, with the relevant adjustments such as "Histogram" 
+instead of "Cumulative Distribution Plot".
+
+```{r ozone-hist}
+# create histogram of ozone concentration
+ggplot(data = ozone_data) + 
+  geom_histogram(aes(x = ozone_date),
+                     bins = 100, 
+                     color = "navy") + 
+   labs(x = "Month",
+       y = "Ozone ppm",
+       title = "Histogram Plot of Ozone ppm vs Month",
+       subtitle = "Ozone levels in Fort Collins between January 2019 and January 2020") +
+   scale_y_continuous(breaks = seq(from = 0,
+                                  to = 200, 
+                                  by = 20)) + 
+  scale_x_date(date_breaks = "months" , date_labels = "%b-%y")
+theme_bw
+```
+
+### Question 5: Concept
+
+What mathematical concept is a histogram (Q4) attempting to visualize?
+  --> histograms represent the frequency of an occurance
+
+### Question 6: Distribution
+
+Based on the histogram (Q4), does ozone concentration appear to be normally
+distributed? 
+  --> Based on the histogram, the concentration does not appear to be normally distributed. 
+
+### Question 7: Outliers
+
+Based on the histogram (Q4), do you see any possible outliers? Skewness? How
+might this affect the spread and central tendency?
+  --> The general trend is the ozone levels are about 190 then drop to 140 then 190 again and 140, alternating. This is disrupted between the middle of July and the middle of August where the levels are as low as around 70ppm and only get up to about 95ppm. This might affeect the spread and central tendancy by bringing the mean or median down as those data sets are not the usual pattern. 
+
+\newpage
+
+## Question 8: Boxplot
+
+Generate a boxplot of ozone concentration on the y-axis with a title, subtitle,
+y-axis label, and theme consistent with the style of the previous two plots. 
+Use quotes (`""`) as the `x` arguments within the calls to the aesthetic and 
+labels to remove the x-axis scale and label.
+
+```{r ozone-boxplot}
+# create ozone boxplot
+ggplot(data = ozone_data,
+       mapping = aes(x = "",
+                     y = ozone_ppm)) + 
+  geom_boxplot() +
+  labs(x = "",
+       y = "Ozone ppm",
+       title = "Box Plot of Ozone ppm vs Month",
+       subtitle = "Ozone levels in Fort Collins between January 2019 and January 2020")
+theme_bw
+```
+
+\newpage
+
+# Subset Data
+
+Use the following code to create a dataframe for use in the remaining questions.
+These ozone concentration measurements were taken on July 4, 2019 in Fort
+Collins, CO. This code detects certain characters with the `datetime` object and
+filters to observations containing those characters. There are other ways this 
+could have been done (e.g., `dplyr::filter()` with `%in%` operator).
+
+```{r ozone-day}
+# create subset of data with only one day to examine daily pattern
+# I did not ask you to code this because we have not discussed dates or stringr
+# You need to uncomment the below three lines and run it; check object names
+ ozone_day <- ozone_data %>% 
+   dplyr::filter(stringr::str_detect(string = datetime,
+                                     pattern = "2019-07-04"))
+```
+
+## Question 9: Autocorrelation Plot
+
+Define autocorrelation as it relates to ozone concentration measurement. 
+  --> autocorrelation will show how often the data is the same and how much the ppm correlates to each other per day 
+  
+Create an autocorrelation plot of ozone concentration, using `stats::acf()` and
+include axis labels and title. Describe what you see based on the features of
+interest outlined in the coursebook.
+  --> this plot shows a relatively strong level of correlation as the pattern represents a cosine wave which represents a stronger level of autocorrelation. This makes sense given that this data is on time. 
+
+```{r ozone-acf}
+# create autocorrelation plot with ozone_day df
+ozone_acf <- stats::acf(ozone_day$ozone_ppm,
+                        plot = FALSE)
+plot(ozone_acf, 
+     main = "Autocorrelation of Ozone levels in Fort Collins from January 2019 to January 2020",
+     xlab = "Lag (hours)",
+     ylab = "Correlation Coefficient")
+
+```
+
+\newpage
+
+## Question 10: Parial Autocorrelation Plot
+
+Define partial autocorrelation as it relates to ozone concentration measurement.
+
+Now create a partial autocorrelation plot of day ozone concentration with axis
+labels. Describe what you see. How does this compare to the autocorrelation
+plot in the previous question?
+  --> The data loses most of it's correlation and becomes a little more correlated around 7 hour lag. 
+
+```{r ozone-part-acf}
+# create partial autocorrelation plot
+ozone_part_acf <-stats::pacf(ozone_day$ozone_ppm,
+                             main = "Partial autocorrelation of Ozone levels in Fort Collins from January 2019 to January 2020",
+                             xlab = "Lag (hours)",
+                             ylab = "Correlation Coefficient")
+```
+
+\newpage
+
+# Appendix
+
+```{r show_code, ref.label = knitr::all_labels(), echo = TRUE, eval = FALSE}
+```

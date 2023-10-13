@@ -1,0 +1,8 @@
+"0","# create autocorrelation plot with ozone_day df"
+"0","ozone_acf <- stats::acf(ozone_day$ozone_ppm,"
+"0","                        plot = FALSE)"
+"0","plot(ozone_acf, "
+"0","     main = ""Correlation of Ozone levels in Fort Collins from January 2019 to January 2020"","
+"0","     xlab = ""Lag (hours)"","
+"0","     ylab = ""Correlation Coefficient"")"
+"0",""

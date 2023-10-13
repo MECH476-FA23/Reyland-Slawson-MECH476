@@ -1,0 +1,7 @@
+"0","# load packages"
+"0","library(tidyverse)"
+"0","library(knitr)"
+"0","library(ggplot2)"
+"0",""
+"0","csv_path <- ""/Users/genevieve/Reyland-MECH476/data/ftc_o3.csv"""
+"0","# I cannot get the ../../Reyland-MECH476/data/ft_o3.csv to work in the readr::read_csv(file=) I've tried moving the file elsewhere too but it doesn't work. This csv_path works for me and it's not too much extra work. I'm not sure what's going wrong. It worked in ch3 but stopped in ch4 and then wouldn't run in ch3 again after I submitted. "

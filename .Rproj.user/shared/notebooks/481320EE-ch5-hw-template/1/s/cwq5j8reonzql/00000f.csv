@@ -1,0 +1,6 @@
+"0","# create subset of data with only one day to examine daily pattern"
+"0","# I did not ask you to code this because we have not discussed dates or stringr"
+"0","# You need to uncomment the below three lines and run it; check object names"
+"0"," ozone_day <- ozone_data %>% "
+"0","   dplyr::filter(stringr::str_detect(string = datetime,"
+"0","                                     pattern = ""2019-07-04""))"

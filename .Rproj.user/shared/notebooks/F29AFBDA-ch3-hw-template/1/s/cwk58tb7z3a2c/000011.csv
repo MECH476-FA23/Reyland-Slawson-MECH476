@@ -1,0 +1,12 @@
+"0","# ozone: import, select, drop missing observations, rename"
+"0"," # use relative path name"
+"0"," # select needed variables "
+"0"," # drop missing observations"
+"0"," # rename main variable"
+"0","  ozone_data <- readr::read_csv(file = ""ftc_o3.csv"") %>%"
+"0","    dplyr::select(sample_measurement,"
+"0","                  datetime) %>%"
+"0","    drop_na() %>%"
+"0","    dplyr::rename(ozone_ppm = sample_measurement)"
+"2","Error: 'ftc_o3.csv' does not exist in current working directory ('/Users/genevieve/Reyland-MECH476/homework/Chapter 3').
+"
