@@ -161,6 +161,13 @@ sum(is.na(df_mpg))
 # return a df of rows with missing values 
 df_mpg %>% 
   filter(!complete.cases(.))
-# dot acts as a placeholder argument when more than one function is nested iwthin a single seciton of pipe
+# dot acts as a placeholder argument when more than one function is nested within a single section of pipe. The dot can be used if some base R functions like complete.cases() throw an error. Since tidyverse pipes, the object above is not registered as the argument without a dot.
 
+# two more ways to filter missing data 
+# filter the df for rows where any of the observations contain NA using dplyr
+df_mpg %>% 
+  dplyr::filter_all(dplyr::any_vars(is.na(.)))
+
+# preview of code we will learn in Chapter 8 using purrr. This method sums up the NAs per column
+df_mpg %>% purrr::map_dfc(~sum(is.na(.)))
 ```
