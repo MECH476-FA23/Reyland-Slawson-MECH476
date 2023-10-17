@@ -1,8 +1,0 @@
-complete.cases() is a function that returns a logical vector showing which rows are complete (no mising values)
-e.g. 
-  df_mpg %>% 
-    filter(!complete.cases(.))
-dot acts as a placeholder argument when more than one function is nested iwthin a single seciton of pipe. The following all result in the same thing: 
-  df_mpg %>% filter(!complete.cases(.))
-  df_mpg %>% filter(!complete.cases(df_mpg))
-  filter(df_mpg, !complete.cases(df_mpg))

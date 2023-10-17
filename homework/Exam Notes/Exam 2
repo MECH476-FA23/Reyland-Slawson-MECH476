@@ -1,0 +1,137 @@
+Exam functions
+
+base::
+[ ]
+#
+?
+<-
+c
+:
+Logical operators: == != & |
+Directory abbreviations: ~ . .. ../..
+list.files
+unique --> returns a ector or array of x but duplicate elements are removed 
+is.na --> a constant where it shows NA
+colnames --> retrieves a set of column names
+getwd
+sessionInfo
+print
+paste
+paste0
+class
+length
+sum
+library
+install.package
+dim
+nrow
+ncol
+str
+summary
+head
+tail
+vignette
+seq
+length
+
+unclass
+POSIXct --> time calendar time (from january 1, 1970)
+POSIXlt --> time local time
+as.factor --> converst object into a factor
+levels --> can assign numbers to words ("low" and "high" can be associated with 1 and 5)
+stats:: 
+acf --> measures and plots the average correlation between data points in a time series measured for different lag lengths *autocorrelation
+pacf --> similar to acf but each partial correlation controls are shorter lag length
+min 
+max
+quantile
+runif
+mean
+sd
+median
+IQR
+cor
+complete.cases
+dplyr::
+slice
+slice_max
+group_by
+tally --> organizes data into classes 
+count --> counts the iterations from each class
+summarise
+select
+glimpse
+mutate
+rename
+filter
+arrange
+across
+pivot_longer
+case_when
+readr::
+read_csv
+read_delim
+read_fwf
+optional readr arguments: skip, col_types, col_names, n_max
+tibble::
+tibble
+magittr::
+%>%
+ggplot::
+aes
+geom_bar
+geom_line
+geom_point
+geom_histogram
+geom_boxplot
+geom_jitter
+stat_ecdf
+scale_x_log10
+scale_y_log10
+ggtitle
+ggsave
+facet_grid
+vars
+aes(color = )
+aes(fill = )
+aes(shape =)
+color
+fill
+shape
+alpha
+xlab
+ylab
+labs
+xlim
+ylim
+theme_bw
+stringr::
+str_detect
+str_extract
+str_subset
+regex syntax: see Table 6.1 in coursebook
+str_split
+str_replace
+Sys.time
+lubridate::
+ymd
+dym
+ymd_hms
+wday
+year
+mday
+month
+New functions since exam 2
+function
+formals
+body
+return
+if else
+map
+mapdfr
+MASS::fitdistr()
+lm
+summary
+geom_smooth
+geom_abline
+geom_qq

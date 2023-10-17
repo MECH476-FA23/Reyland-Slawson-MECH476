@@ -1,4 +1,0 @@
-"0",""
-"0","# facet previous plot by`cyl` in rows and retain labels"
-"0","g1 + facet_grid(rows = vars(cyl),"
-"0","                labeller = label_both)"

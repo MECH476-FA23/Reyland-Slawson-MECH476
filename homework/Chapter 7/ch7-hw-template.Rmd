@@ -44,6 +44,9 @@ recorded as 0. Assign this to a dataframe object with a meaningful name.
 
 ```{r import-data}
 # import and tidy salary data
+salaries <- readr::read_csv(file = salaries_path)
+names(salaries) <- tolower(names(salaries))
+
 
 ```
 

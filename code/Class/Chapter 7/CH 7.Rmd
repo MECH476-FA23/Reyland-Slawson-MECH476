@@ -171,3 +171,142 @@ df_mpg %>%
 # preview of code we will learn in Chapter 8 using purrr. This method sums up the NAs per column
 df_mpg %>% purrr::map_dfc(~sum(is.na(.)))
 ```
+
+# visualize data in plots
+``` {r visalize data}
+# before visualizing the data, convert to tidy format
+tidy_mpg <- df_mpg %>%
+  # choose simple names
+  dplyr::rename(city = city08,
+                hwy = highway08,
+                comb = comb08) %>%
+  # change data structure from wide to long 
+  tidyr::pivot_longer(cols = c("city", "hwy", "comb"),
+                      names_to = "metric",
+                      values_to = "mpg") %>%
+  # switch var to factor
+  dplyr::mutate(metric = as.factor(metric))
+
+## multivariate EDA 
+# create cumulative distribution function plot
+ecdf <- ggplot2::ggplot(data = tidy_mpg, 
+                        mapping = aes(x = mpg, 
+                                      color = metric)) +
+  stat_ecdf() +
+  theme_bw() +
+  scale_x_log10() +
+  xlab(NULL) +
+  ylab("Quantile") 
+# create boxplot
+box <- ggplot2::ggplot(data = tidy_mpg, 
+                       mapping = aes(x = mpg, 
+                                     fill = metric, 
+                                     y = metric)) +
+  geom_boxplot(outlier.alpha = 0.05) +
+  theme_bw() +
+  scale_x_log10() +
+  xlab(NULL) +
+  ylab("Metric") 
+# create histogram
+hist <- ggplot2::ggplot(data = tidy_mpg, 
+                       mapping = aes(x = mpg, 
+                                     fill = metric)) +
+  geom_histogram(bins = 35,
+                 alpha = 0.75,
+                 position = "stack") +
+  theme_bw() +
+  scale_x_log10() +
+  xlab("Fuel Economy, mi/gal") +
+  ylab("Counts")
+# embed plots into one figure, this shows all the figures in one figure rather than separate
+gridExtra::grid.arrange(ecdf, box, hist, 
+                        widths = c(0.4,1,0.4),
+                        layout_matrix = rbind(c(NA, 1, NA),
+                                              c(NA, 2, NA),
+                                              c(NA, 3, NA)))
+```
+
+# cafe plot data 
+``` {r time series - cafe}
+e1 <- ggplot2::ggplot(data = df_mpg, 
+                      mapping = aes(x = year, 
+                                    y = comb08)) +
+  geom_boxplot(aes(group = year),
+               fill = "skyblue",
+               outlier.alpha = 0.1) +
+  scale_y_log10(limits = c(10,100)) +
+  ylab("Combined Fuel Efficiency (mi/gal)") +
+  xlab("") +
+  theme_bw(base_size = 14)
+# call plot
+e1
+
+# use context, the Dept of Energy outlines the corporate average fuel economy (cafe) standards that require vehicles to meet set fuel economy levles.
+cafe_csv <- "/Users/genevieve/Reyland-MECH476/data/CAFE_stds.csv"
+cafe <- read_csv(file = cafe_csv, 
+                 col_names = c("year", "mpg_avg"),
+                 skip = 1)
+cafe.plot <- ggplot2::ggplot(data = cafe, 
+                    mapping = aes(group = year, 
+                                  y = mpg_avg, 
+                                  x = year)) + 
+  geom_col(fill = "maroon") + 
+  theme_bw() +
+  theme(axis.text.x = element_text(angle = 90, 
+                                   hjust = 1)) +
+  labs( y = "Required Average Fuel Efficiency (mpg)", 
+        x = "Year", 
+        title = "Federal Combined Average Fuel Economy (CAFE) Standards")
+# call cafe plot
+cafe.plot 
+
+# density plot of combined fuel economy by fuel type without facets
+g2 <- ggplot2::ggplot(data = df_mpg, 
+                      mapping = aes(x = comb08)) + # now x aes is here 
+  geom_density(aes(fill = fuel_type),
+               position = "identity",
+               alpha = 0.6, # uses alpha calls to make transparent and see the fuel types behind
+               adjust = 1) +
+  scale_x_log10() +
+  theme_bw() 
+# call plot
+g2
+```
+
+# density plots of data 
+```{r density plot}
+# density plot of combined fuel economy by fuel type with facets
+g1 <- ggplot2::ggplot(data = df_mpg) +
+  geom_density(aes(x = comb08, # notice the different location option for x aes
+                   fill = fuel_type)) + 
+  facet_wrap(~ fuel_type,
+             ncol = 3) +
+  scale_x_log10() +
+  theme_bw(base_size = 14) +
+  theme(legend.position = "none")
+# call plot
+g1
+```
+
+``` {r more multivariate data}
+# look at how vehicle class effects the combined fuel economy for a single year: 2020.
+# filter to year 2020 and reorder factor levels 
+df_mpg.2020 <- df_mpg %>%
+  dplyr::filter(year == 2020) %>%
+  # reorder so the data is in order of worst to better from bottom to top, says median of highway 08 by class
+  dplyr::mutate(v_class = forcats::fct_reorder(.f = v_class, 
+                                               .x = highway08, 
+                                               .fun = median))
+# create plot of 2020 combined fuel economy
+g1 <- ggplot2::ggplot(data = df_mpg.2020) + 
+  geom_boxplot(aes(x = highway08, 
+                   color = v_class, 
+                   y = v_class)) + 
+  scale_x_log10() +
+  theme_bw() +
+  ylab("") +
+  xlab("Highway Fuel Economy") +
+  theme(legend.position = "none")
+# call plot
+g1
+```
