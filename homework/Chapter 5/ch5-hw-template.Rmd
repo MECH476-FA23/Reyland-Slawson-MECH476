@@ -245,7 +245,7 @@ Define partial autocorrelation as it relates to ozone concentration measurement.
 Now create a partial autocorrelation plot of day ozone concentration with axis
 labels. Describe what you see. How does this compare to the autocorrelation
 plot in the previous question?
-  --> The data loses most of it's correlation and becomes a little more correlated around 7 hour lag. 
+  --> The data loses most of it's correlation and becomes a little more correlated around 7 hour lag. sal
 
 ```{r ozone-part-acf}
 # create partial autocorrelation plot

@@ -17,6 +17,8 @@ knitr::opts_chunk$set(fig.width=6, fig.height=4, fig.path="../figs/",
 ```{r load-packages, message=FALSE}
 # load packages for current session
 library(tidyverse)
+library(ggplot2)
+library(gridExtra)
 salaries_path <- "/Users/genevieve/Reyland-MECH476/data/ME_Salaries.csv"
 ```
 
@@ -47,14 +49,21 @@ recorded as 0. Assign this to a dataframe object with a meaningful name.
 salaries <- readr::read_csv(file = salaries_path)
 names(salaries) <- tolower(names(salaries))
 
-
+salaries$gender <- as.factor(salaries$gender)
+important_data <- salaries %>%
+  dplyr::filter(salary > 0)
+  
 ```
 
-How many observations have a 0 (zero) value for salary? Note: The last question asked you to remove these observations from the resultant data frame.
+How many observations have a 0 (zero) value for salary? Note: The last question asked you to remove these observations from the resultant data frame. 
+
+   --> there were 15 observations that had a 0 for salary. 
 
 ```{r salary-zero}
 # number of observations with salary as 0 
-
+zero_salary <- salaries %>%
+  dplyr::filter(salary == 0) %>%
+  tally()
 ```
 
 What are the levels in `gender`? (Ignore the fact that the observations
@@ -62,9 +71,11 @@ refer to "biological sex", not "gender". *Gender* is now recognized as a fluid
 term with more than two options; *biological sex* - what was assigned at birth - 
 is binary term).
 
+   --> "F" and "M"
+
 ```{r gender-levels}
 # number of factor levels
-
+levels(salaries$gender)
 ```
 
 ## Question 2: Univariate EDA
@@ -75,8 +86,46 @@ is continuous or categorical, and explain how and why you adjusted your EDA
 approach accordingly.
 
 ```{r univariate-eda, include=FALSE}
-# univariate eda
+# univariate eda 
+# cumulative bar chart for gender and age
+g_plot <- ggplot(data = salaries,
+                 mapping = aes(x = age,
+                               y = salary,
+                               fill = gender)) + 
+  geom_bar(stat = "identity",
+           position = "dodge")
 
+# box plot for age vs salary
+box_salary <- ggplot(data = salaries, 
+                     mapping = aes(x = salary,
+                                   fill = gender,
+                                   y = gender)) + 
+  geom_boxplot(outlier.alpha = 0.05) + 
+  theme_bw() 
+
+# quartile plot for gender and salary
+quartile_salary <- ggplot(data = salaries,
+                          mapping = aes(x = salary,
+                                        color = gender)) + 
+  stat_ecdf() + 
+  theme_bw() + 
+  labs(x = "Salary",
+       y = "Quantile")
+
+# histogram of gender vs age 
+hist_age <- ggplot(data = salaries) + 
+  geom_histogram(aes(x = age,
+                     fill = gender),
+                 bins = 100,
+                 position = "dodge")
+  
+# embed plots into one figure
+gridExtra::grid.arrange(g_plot, box_salary, quartile_salary, hist_age,
+                        widths = c(0.4, 1, 0.4),
+                        layout_matrix = rbind(c(NA, 1, NA),
+                                              c(NA, 2, NA),
+                                              c(NA, 3, NA),
+                                              c(NA, 4, NA)))
 ```
 
 \newpage
@@ -88,7 +137,16 @@ Create a histogram of `salary`, faceted by `gender`. Add `bins = 50` and
 
 ```{r hist-salary}
 # histogram of salaries split by gender
+hist_salary <- ggplot(data = salaries) + 
+  geom_histogram(aes(x = salary), 
+                 bins = 50,
+                 color = "lightgrey") + 
+  labs(x = "Salary",
+       y = "Number of People")
 
+# faceted by gender
+hist_salary + facet_grid(cols = vars(gender),
+                         labeller = label_both)
 ```
 
 Create a histogram of `age`, faceted by `gender`. Add `bins = 50` and 

@@ -1,0 +1,31 @@
+---
+title: 'Chapter 8 Class Code'
+subtitle: 'Code from class modeling chapter 8 concepts' 
+author: 'Genevieve Reyland-Slawson'
+date: '`r format(Sys.time(), "%d %B, %Y")`'
+output: html_document
+---
+
+```{r global-options, include = FALSE}
+# set global options for figures, code, warnings, and messages
+knitr::opts_chunk$set(fig.width = 6, fig.height = 4, fig.path = "../figs/",
+                      echo = TRUE, warning = FALSE, message = FALSE)
+```
+
+``` {r import packages}
+library(tidyverse)
+```
+
+``` {r programming functions}
+# will show the arguments
+formals(mutate)
+formals(mean)
+
+# example function
+my_mean <- function(x) {
+  y <- sum(x) / length(x)
+  return(y)
+}
+
+my_mean(1:5)
+```
