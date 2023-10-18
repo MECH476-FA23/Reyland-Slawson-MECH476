@@ -85,6 +85,8 @@ statistics to explore `age`, `gender`, and `salary`. List whether each variable
 is continuous or categorical, and explain how and why you adjusted your EDA
 approach accordingly.
 
+   --> The plots are mostly continuous with categories added, some like the box plot, are categorial as it shows the two genders with one other variable. I added a few plots to show the different ways data could be maximized to visualize the best. (Note after completing assignment: I clearly misunderstood the meaning of basic plots)
+
 ```{r univariate-eda, include=FALSE}
 # univariate eda 
 # cumulative bar chart for gender and age
@@ -154,7 +156,14 @@ Create a histogram of `age`, faceted by `gender`. Add `bins = 50` and
 
 ```{r hist-age}
 # histogram of ages split by gender
-
+hist_age2 <- ggplot(data = salaries) + 
+  geom_histogram(aes(x = age),
+                 bins = 50,
+                 color = "lightgrey") + 
+  labs(x = "Age",
+       y = "Number of People")
+hist_age2 + facet_grid(cols = vars(gender),
+                       labeller = label_both)
 ```
 
 \newpage
@@ -166,14 +175,28 @@ better visualize the outliers.
 
 ```{r salary-box}
 # boxplots of salary data by gender
-
+salary_box <- ggplot(data = salaries) + 
+  geom_boxplot(aes(y = salary)) + 
+  labs(y = "Salary",
+       title = "Boxplot for Salary Based on Gender") + 
+  coord_flip()
+salary_box + facet_grid(cols = vars(gender),
+                        labeller = label_both)
+  geom_boxplot(outlier.shope = 1) 
 ```
 
 Create a boxplot of `age`, faceted by `gender`.
 
 ```{r age-box}
 # boxplots of age data by gender
-
+age_box <- ggplot(data = salaries) + 
+  geom_boxplot(aes(y = age)) + 
+  labs(y = "Age",
+       title = "Boxplot for Age Based on Gender") + 
+  coord_flip()
+age_box + facet_grid(cols = vars(gender),
+                        labeller = label_both)
+  geom_boxplot(outlier.shope = 1) 
 ```
 
 \newpage
