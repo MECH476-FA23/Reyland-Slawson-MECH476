@@ -208,7 +208,12 @@ Create a scatterplot of `age` (x-axis) and `salary`, differentiating by
 
 ```{r multivar-scatter}
 # scatterplot of salary across age by gender
-
+multivar_scatter <- ggplot(data = salaries,
+                           mapping = aes(x = age,
+                                         y = salary,
+                                         color = gender)) + 
+  geom_point() + 
+  theme_bw()
 ```
 
 *Bonus point*: Is there a correlation between an engineer's salary and age?
