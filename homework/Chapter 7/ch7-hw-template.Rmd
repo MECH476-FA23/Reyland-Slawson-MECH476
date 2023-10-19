@@ -19,7 +19,6 @@ knitr::opts_chunk$set(fig.width=6, fig.height=4, fig.path="../figs/",
 library(tidyverse)
 library(ggplot2)
 library(gridExtra)
-library(knitr)
 salaries_path <- "/Users/genevieve/Reyland-MECH476/data/ME_Salaries.csv"
 ```
 
@@ -282,33 +281,49 @@ scientific notation in the text output; check the knitted document.
 # calculate quantiles of salary by gender
 set.seed(1)
 
-salary_quart <- salaries %>%
-  dplyr::select(salary) %>%
-  dplyr::filter(salary > 0) %>%
-  dplyr::arrange(salary) %>%
-  dplyr::mutate(cum_pct = seq.int(from 1/length(salary),
-                                  to = 1,
-                                  by = 1/length(salary)))
-cdf_salaries <- quantile(univar,
-                         probs = seq(0, 1, 0.25)) %>%
-  round(1)
-cdf_salaries
+f_quart <- salaries %>%
+  dplyr::select(salary, gender) %>%
+  dplyr::group_by(gender) %>% 
+  dplyr::filter(gender == "F") %>%
+  dplyr::ungroup()
+
+m_quart <- salaries %>%
+  dplyr::select(salary, gender) %>%
+  dplyr::group_by(gender) %>% 
+  dplyr::filter(gender == "M") %>%
+  dplyr::ungroup() 
+
+m_cdf_salaries <- quantile(m_quart$salary, probs = seq(0, 1, 0.25)) 
+f_cdf_salaries <- quantile(f_quart$salary, probs = seq(0, 1, 0.25)) 
+
+m_cdf_salaries
+f_cdf_salaries
+
+paste0("The median salary for women is ", "$", median(f_cdf_salaries))
+paste0("The median salary for men is ", "$", median(m_cdf_salaries))
+paste0("The difference at the median is ", "$", median(m_cdf_salaries) - median(f_cdf_salaries))
+
+paste0("The max salary for women is ", "$", max(f_cdf_salaries))
+paste0("The max salary for men is ", "$", max(m_cdf_salaries))
+paste0("The difference at the maximum is ", "$", max(m_cdf_salaries) - max(f_cdf_salaries))
 ```
 
 What is the difference in salary between men and women at the median? 
 
-  * Median salary for women is 
-  * Median salary for men is 
-  * The difference at the median is 
+  * Median salary for women is $90,000
+  * Median salary for men is $97,000
+  * The difference at the median is $7,000
   
 At the top percentile (maximum)? 
 
-  * Maximum salary for women is 
-  * Maximum salary for men is 
-  * The difference at the maximum is 
+  * Maximum salary for women is $350,000
+  * Maximum salary for men is $1,027,753
+  * The difference at the maximum is $677,653
 
 Do you think there is a salary difference by gender across the pay scale? What
 other information would you need to test your hypothesis?
+
+   --> I'm not sure what this question is asking as it sounds like the question is asking what I just found. There is a salary difference by gender across the pay scale, it is seen in the above questions. The men make on average, \$7,000 more than women and the top percentile of men make \$677,653 more than the top percentile of women. 
 
 ## Question 8: Hypothetical analysis
 
@@ -316,6 +331,8 @@ Think about what other variables you would like to include in an hypothetical
 analysis. From your perspective, what are the most important individual,
 family, and workforce factors related to salary---beyond gender and age?
 
+   --> I would look at the specific occupation of the people, if they went into the industry, research, or something else not related to engineering. The other charts created allow to see that in the quantiles men are making more than women. I think it could be interesting to see if mean make more than women at each age though. I think it could be interesting to also see how long each person had been working as well to see if age and time correlate to salary. In addition, another interesting factor could be location, people in California and New York most likely make more than engineers in Idaho or Missouri. 
+   
 \newpage
 
 ## Question 9: Recreate plot
@@ -329,7 +346,21 @@ see any patterns when considering the third variable?
 
 ```{r mpg-plot}
 # call mpg pdf - you need to recreate it 
-# knitr::include_graphics("./mpg-ch7-plot.pdf")
+mpg_plot <- ggplot(data = mpg) + 
+  geom_point(aes(x = displ,
+                 y = hwy,
+                 color = class),
+             alpha = 0.5) + 
+  labs(x = "Engine displacement (litres)",
+       y = "Highway miles per gallon",
+       title = "Mileage by engine displacement",
+       subtitle = "Date from 1999 to 2008",
+       color = "Car class") + 
+  theme_minimal()
+mpg_plot 
+
+image_mpg <- "/Users/genevieve/Reyland-MECH476/data/images/mpg-ch7-plot.pdf"
+knitr::include_graphics(image_mpg)
 ```
 
 \newpage

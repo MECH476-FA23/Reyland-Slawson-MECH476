@@ -1,5 +1,0 @@
-"0","# number of wildfire tweets by senator"
-"0","wildfire %>%"
-"0","  dplyr::group_by(user) %>%"
-"0","  dplyr::tally() %>%"
-"0","  dplyr::ungroup()"
