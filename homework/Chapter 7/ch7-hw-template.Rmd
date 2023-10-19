@@ -19,6 +19,7 @@ knitr::opts_chunk$set(fig.width=6, fig.height=4, fig.path="../figs/",
 library(tidyverse)
 library(ggplot2)
 library(gridExtra)
+library(knitr)
 salaries_path <- "/Users/genevieve/Reyland-MECH476/data/ME_Salaries.csv"
 ```
 
@@ -85,7 +86,7 @@ statistics to explore `age`, `gender`, and `salary`. List whether each variable
 is continuous or categorical, and explain how and why you adjusted your EDA
 approach accordingly.
 
-   --> The plots are mostly continuous with categories added, some like the box plot, are categorial as it shows the two genders with one other variable. I added a few plots to show the different ways data could be maximized to visualize the best. (Note after completing assignment: I clearly misunderstood the meaning of basic plots)
+   --> The plots are mostly continuous with categories added, some like the box plot, are categorial as it shows the two genders with one other variable. I added a few plots to show the different ways data could be maximized to visualize the best. Noting the plots are basic plots and are not labeled as detailedly as a final and more analytical graph. (Note after completing assignment: I clearly misunderstood the meaning of basic plots)
 
 ```{r univariate-eda, include=FALSE}
 # univariate eda 
@@ -144,7 +145,12 @@ hist_salary <- ggplot(data = salaries) +
                  bins = 50,
                  color = "lightgrey") + 
   labs(x = "Salary",
-       y = "Number of People")
+       y = "Number of People",
+       title = "Histogram of Salaries Based on Age",
+       subtitle = "Engineering Graduates Salaries Split by Age") + 
+  scale_x_continuous(labels = scales::label_dollar(scale = 0.001, 
+                                                   prefix = '$', 
+                                                   suffix = 'k'))
 
 # faceted by gender
 hist_salary + facet_grid(cols = vars(gender),
@@ -161,7 +167,9 @@ hist_age2 <- ggplot(data = salaries) +
                  bins = 50,
                  color = "lightgrey") + 
   labs(x = "Age",
-       y = "Number of People")
+       y = "Number of People",
+       title = "Histogram of Number of People per Age",
+       subtitle = "Engineering Graduates by Age in 2017")
 hist_age2 + facet_grid(cols = vars(gender),
                        labeller = label_both)
 ```
@@ -176,13 +184,17 @@ better visualize the outliers.
 ```{r salary-box}
 # boxplots of salary data by gender
 salary_box <- ggplot(data = salaries) + 
-  geom_boxplot(aes(y = salary)) + 
+  geom_boxplot(aes(y = salary),
+               outlier.shape = 1) + 
   labs(y = "Salary",
-       title = "Boxplot for Salary Based on Gender") + 
-  coord_flip()
+       title = "Boxplot for Salary Based on Gender",
+       subtitle = "Plot for Salary of Engineers Based on Gender in 2017") + 
+  scale_y_continuous(labels = scales::label_dollar(scale = 0.001, 
+                                                   prefix = '$', 
+                                                   suffix = 'k')) +
+  coord_flip() 
 salary_box + facet_grid(cols = vars(gender),
                         labeller = label_both)
-  geom_boxplot(outlier.shope = 1) 
 ```
 
 Create a boxplot of `age`, faceted by `gender`.
@@ -196,7 +208,6 @@ age_box <- ggplot(data = salaries) +
   coord_flip()
 age_box + facet_grid(cols = vars(gender),
                         labeller = label_both)
-  geom_boxplot(outlier.shope = 1) 
 ```
 
 \newpage
@@ -213,15 +224,22 @@ multivar_scatter <- ggplot(data = salaries,
                                          y = salary,
                                          color = gender)) + 
   geom_point() + 
+  labs(x = "Age",
+       y = "Salary",
+       title = "Salary Based on Age",
+       subtitle = "Scatterplot of Engineers Salary per Age by Gender") +
   theme_bw()
+multivar_scatter
 ```
 
 *Bonus point*: Is there a correlation between an engineer's salary and age?
 What is the estimated Pearson correlation coefficient *r*? Run a formal test.
 
+   --> 0.1969265 which means there's not a high correlation.
+
 ```{r corr-test}
 # correlation test
-
+corr_test <- cor(salaries$salary, salaries$age)
 ```
 
 \newpage
@@ -233,9 +251,21 @@ x-axis with `scale_x_log10(limits = c(5e4, 5e5))` to zoom in a bit. What do you
 notice about the salaries for men and women? Hint: Remember there are greater
 differences the farther up you go on a log scale axis.
 
+   --> For the women in the highest quantile, they are making less than the men in the highest quantile. This is a similar pattern in all the quantiles where men are making more than women in the same quantile. 
+
 ```{r salary-ecdf}
 # plot cdf of salary by gender
-
+salary_ecdf <- ggplot(data = salaries) + 
+  geom_step(aes(x = salary,
+                color = gender),
+            stat = "ecdf") + 
+  labs(x = "Salary",
+       y = "Quantile",
+       title = "Cumulative Distribution Plot of Salary by Gender",
+       subtitle = "Plot of Salary by Gender for Engineers") + 
+  scale_x_log10(limits = c(5e4, 5e5)) + 
+  theme_bw()
+salary_ecdf
 ```
 
 ## Question 7: Quantiles
@@ -250,7 +280,19 @@ scientific notation in the text output; check the knitted document.
 
 ```{r salary-quantiles, message=FALSE}
 # calculate quantiles of salary by gender
+set.seed(1)
 
+salary_quart <- salaries %>%
+  dplyr::select(salary) %>%
+  dplyr::filter(salary > 0) %>%
+  dplyr::arrange(salary) %>%
+  dplyr::mutate(cum_pct = seq.int(from 1/length(salary),
+                                  to = 1,
+                                  by = 1/length(salary)))
+cdf_salaries <- quantile(univar,
+                         probs = seq(0, 1, 0.25)) %>%
+  round(1)
+cdf_salaries
 ```
 
 What is the difference in salary between men and women at the median? 
@@ -287,7 +329,7 @@ see any patterns when considering the third variable?
 
 ```{r mpg-plot}
 # call mpg pdf - you need to recreate it 
-knitr::include_graphics("./mpg-ch7-plot.pdf")
+# knitr::include_graphics("./mpg-ch7-plot.pdf")
 ```
 
 \newpage
