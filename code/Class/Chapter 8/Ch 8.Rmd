@@ -29,3 +29,58 @@ my_mean <- function(x) {
 
 my_mean(1:5)
 ```
+
+``` {r import.w.name}
+# create an object that tracks the file names and file paths
+file_list <- list.files('/Users/genevieve/Reyland-MECH476/data/purpleair/',
+                        full.names = TRUE)
+
+# function to import a .csv and include part of the filename as a data column
+import.w.name <- function(pathname) {
+  #create a tibble by importing the 'pathname' file
+  df <- read_csv(pathname, col_names = TRUE)
+  df <- df %>%
+    # use stringr::str_extract & a regex to get sensor ID from file name
+    # regex translation: "look for a /, then extract all letters and numbers that follow until _"
+    mutate(sensor_ID = str_extract(pathname, 
+                                  "(?<=//)[:alnum:]+(?=_)")) %>%
+    # return only a few salient variables to the resultant data frame using dplyr::select
+    select(UTCDateTime, 
+           current_temp_f, 
+           current_humidity, 
+           pressure,
+           pm2_5_atm,
+           sensor_ID) %>%
+    na.omit() # remove NA values, which happens when sensor goes offline
+  return(df)
+}
+PA_data_1 <- import.w.name(file_list[1])
+
+head(PA_data_1)
+```
+
+``` {r purr}
+my.chr.vector <- c("Harry", "Ron", "Hermione", "Draco")
+
+my.num.matrix <- matrix(data = 1:20, nrow=5)
+
+my.df <- slice_sample(.data = mpg, n=7)
+
+my.list <- list("entry_1" = my.chr.vector, 
+                "entry_2" = my.num.matrix, 
+                "entry_3" = my.df)
+
+glimpse(my.list)
+
+# lists can be accessed through indexing 
+my.list[1]
+class(my.list[2])
+my.list$entry_1
+class(my.list$entry_1)
+class(my.list[[2]])
+```
+
+``` {r map_dfr}
+PA_data_merged <- map_dfr(file_list, import.w.name)
+glimpse(PA_data_merged)
+```

@@ -1,0 +1,4 @@
+data fram and matrix are v similar 
+  --> matrix is a 2D object where all entries are the same type 
+      data fram is a 3D object where all entries can differ in type (character, numeric, etc.)
+      

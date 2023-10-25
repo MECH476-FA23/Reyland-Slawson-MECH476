@@ -1,15 +1,15 @@
 ---
 title: 'MECH481A6: Engineering Data Analysis in R'
 subtitle: 'Chapter 8 Homework: Functional Programming' 
-author: 'Student Name'
+author: 'Genevieve Reyland-Slawson'
 date: '`r format(Sys.time(), "%d %B, %Y")`'
-output: pdf_document
+output: html_document
 ---
 
 ```{r global-options, include=FALSE}
 # set global options for figures, code, warnings, and messages
 knitr::opts_chunk$set(fig.width=6, fig.height=4, fig.path="../figs/",
-                      echo=FALSE, warning=FALSE, message=FALSE)
+                      echo=TRUE, warning=FALSE, message=FALSE)
 ```
 
 # Load packages
@@ -19,6 +19,8 @@ knitr::opts_chunk$set(fig.width=6, fig.height=4, fig.path="../figs/",
 library(tidyverse) 
 library(lubridate)
 library(gridExtra) # needed for extra credit question
+
+source("/Users/genevieve/Reyland-MECH476/functions/importwname.R")
 ```
 
 # Chapter 8 Homework
@@ -38,9 +40,13 @@ like to use the subtitle as a place for the main summary for the viewer.
 Write a **function** named `sort_abs()`that takes a vector of numbers as input, calculates the absolute values of each entry, and then outputs that vector sorted from smallest to largest value. 
 
 ```{r sort-baseR, include=FALSE}
-
 #create a function named `sort_abs()`
-
+sort_abs <- function(x) {
+  a <- abs(x)
+  b <- sort(a)
+  c <- unique(b)
+  return(c)
+}
 ```
 
 ## Question 2
@@ -51,12 +57,29 @@ Modify the function `import.w.name()` to import the “date” part of the filen
 # create an object that tracks the file names and file paths
 # see the coursebook for details
 
-
 # modify the import.w.name function
 # hint: start with what is provided in the coursebook
+file_list <- list.files('/Users/genevieve/Reyland-MECH476/data/purpleair/',
+                        full.names = TRUE)
+import.w.name2 <- function(pathname) {
+  df2 <- import.w.name(pathname)
+  df2 <- df2 %>%
+    dplyr::mutate(date_created = str_extract(pathname,
+                                             "(?<=_)[:alnum:]+(?=\\.)")) %>%
+    dplyr::select(UTCDateTime,
+                  current_temp_f,
+                  current_humidity,
+                  pressure,
+                  pm2_5_atm,
+                  sensor_ID,
+                  date_created) %>%
+    na.omit()
+  return(df2)
+}
 
+PA_data_2 <- import.w.name2(file_list[1])
 
-
+head(PA_data_1)
 ```
 
 ## Question 3
@@ -64,34 +87,88 @@ This question is designed to give you practice at data cleaning. First, create a
 
 ```{r map-dplyr-pipe, warning=FALSE, message=FALSE, include=FALSE}
 # the map code is provided in the coursebook
-
-
+PA_data_merged <- map_dfr(file_list, import.w.name)
+PA_data_merged <- PA_data_merged %>%
+  dplyr::mutate(datetime = lubridate::ymd_hms(UTCDateTime)) %>% 
+  dplyr::rename(temp = current_temp_f,
+                humidity = current_humidity)
 ```
 
 ## Question 4
 Can you find the 3 indices of UTCDateTime in PA_data_merged that failed to parse with lubridate::? Hint: use the `is.na()` function nested wihtin `which()` to return the row numbers in question. Both of these are baseR functions. Once you have the row entries identified you can `View()` them with a call to `slice()`.: normal entries in UTCDateTime are all the same number of characters nchar() or entries that failed to parse in the new date column will have NA associated with them.
 ```{r find-NAs, include=FALSE}
-
-
+find_NAs <- which(is.na(PA_data_merged$datetime)) 
+NA_parse <- PA_data_merged %>%
+  slice(find_NAs) %>%
+  view()
 ```
 
 ## Question 5
 Create a series of EDA plots (cdf, boxplot, histogram, time series) of the `pm2_5_atm` variable from `PA_data_merged`. Use `color =` or `fill =` as an aesthetic to differentiate each sensor by `sensor_ID`. Do the data have a central tendency? Do they appear normally distributed? Do events show up in the time series?  Note: the variable `pm2_5_atm` is the concentration of fine particulate matter air pollution in micrograms per cubic meter ($\mu g/m^3$).
+
 
 ### Extra Credit
 Create the EDA figures within a single plot (hint: use the `gridExtra::` package).  Show only one legend and place it within the body of the CDF plot (hint: to move or remove a legend, add a call that uses a version of `theme(legend.position = ...)`).
 
 ```{r PA-EDA-plots, message=FALSE, warning=FALSE, include=FALSE}
 #cdf plot
-
+cdf_PA <- ggplot(data = PA_data_merged) + 
+  geom_step(aes(x = datetime,
+                y = pm2_5_atm,
+                color = sensor_ID),
+            stat = "ecdf") + 
+  labs(x = "Date",
+       y = "Air Quality",
+       title = "Cummulative Distribution Plot of Air Quality",
+       subtitle = "Plot of air quality from Purple Air over the last 3 days",
+       color = "Sensor ID") + 
+  scale_x_datetime(date_labels = "%D") + 
+  theme_bw() + 
+  theme(legend.position = "top")
+cdf_PA
 
 #boxplot
-
+box_PA <- ggplot(data = PA_data_merged) + 
+  geom_boxplot(aes(y = datetime,
+                   fill = sensor_ID),
+               color = "black") + 
+  labs(y = "Date",
+       title = "Boxplot for Air Quality",
+       subtitle = "Plot of air quality from Purple Air over the last 3 days",
+       fill = "Sensor ID") + 
+  coord_flip() + 
+  theme(legend.position = "none")
+box_PA
 
 #time-series plot
-
+timeplot_PA <- ggplot(data = PA_data_merged) + 
+  geom_line(aes(x = datetime, 
+                y = pm2_5_atm,
+                color = sensor_ID)) + 
+  labs(x = "Date",
+       y = "Air Quality",
+       title = "Time Series Plot for Air Quality",
+       subtitle = "Plot of air quality from Purple Air over the last 3 days",
+       color = "Sensor ID") + 
+  theme_bw() + 
+  theme(legend.position = "none")
+timeplot_PA
 
 #histogram
+hist_PA <- ggplot(data = PA_data_merged) + 
+  geom_histogram(aes(x = datetime,
+                     fill = sensor_ID),
+                 bins = 50,
+                 position = "dodge") + 
+  labs(x = "Date",
+       y = "Air Quality",
+       title = "Histogram for Air Quality",
+       subtitle = "Plot of air quality from Purple Air over the last 3 days",
+       fill = "Sensor ID") + 
+  theme_bw() + 
+  theme(legend.position = "none")
+hist_PA
 
-
+# combine all into one figure 
+gridExtra::grid.arrange(cdf_PA, box_PA, timeplot_PA, hist_PA)
 ```

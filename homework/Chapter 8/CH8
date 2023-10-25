@@ -1,0 +1,9 @@
+purr function
+map() returns list
+map_lgl() returns logical
+map_int() returns integer
+map_dbl() returns numeric
+map_chr() returns character
+map_dtf() returns dataframe (output by row-binding)
+map_dfc() returns dataframe (output by column-bunding)
+
