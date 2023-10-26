@@ -19,8 +19,6 @@ knitr::opts_chunk$set(fig.width=6, fig.height=4, fig.path="../figs/",
 library(tidyverse) 
 library(lubridate)
 library(gridExtra) # needed for extra credit question
-
-source("/Users/genevieve/Reyland-MECH476/functions/importwname.R")
 ```
 
 # Chapter 8 Homework
@@ -33,13 +31,12 @@ but put in some effort and make the plotting approach consistent throughout
 the document. For example, you could use the same theme for all plots. I also
 like to use the subtitle as a place for the main summary for the viewer.
 
-\newpage
 
 ## Question 1
 
 Write a **function** named `sort_abs()`that takes a vector of numbers as input, calculates the absolute values of each entry, and then outputs that vector sorted from smallest to largest value. 
 
-```{r sort-baseR, include=FALSE}
+```{r sort-baseR, include=TRUE}
 #create a function named `sort_abs()`
 sort_abs <- function(x) {
   a <- abs(x)
@@ -53,7 +50,7 @@ sort_abs <- function(x) {
 
 Modify the function `import.w.name()` to import the “date” part of the filename (in addition to the sensor ID). Create a new column variable called “date_created” with this information. Hint: you will need to apply a regex pattern like this: `"(?<=_)[:alnum:]+(?=\\.)"`
 
-```{r import.w.name2, include=FALSE}
+```{r import.w.name2, include=TRUE}
 # create an object that tracks the file names and file paths
 # see the coursebook for details
 
@@ -61,31 +58,53 @@ Modify the function `import.w.name()` to import the “date” part of the filen
 # hint: start with what is provided in the coursebook
 file_list <- list.files('/Users/genevieve/Reyland-MECH476/data/purpleair/',
                         full.names = TRUE)
+
+import.w.name <- function(pathname) {
+  #create a tibble by importing the 'pathname' file
+  df <- read_csv(pathname, col_names = TRUE)
+  df <- df %>%
+    # use stringr::str_extract & a regex to get sensor ID from file name
+    # regex translation: "look for a /, then extract all letters and numbers that follow until _"
+    mutate(sensor_ID = str_extract(pathname, 
+                                  "(?<=//)[:alnum:]+(?=_)")) %>%
+    # return only a few salient variables to the resultant data frame using dplyr::select
+    select(UTCDateTime, 
+           current_temp_f, 
+           current_humidity, 
+           pressure,
+           pm2_5_atm,
+           sensor_ID) %>%
+    na.omit() # remove NA values, which happens when sensor goes offline
+  return(df)
+}
+
 import.w.name2 <- function(pathname) {
-  df2 <- import.w.name(pathname)
+  df2 <- read_csv(pathname, col_names = TRUE)
   df2 <- df2 %>%
-    dplyr::mutate(date_created = str_extract(pathname,
-                                             "(?<=_)[:alnum:]+(?=\\.)")) %>%
-    dplyr::select(UTCDateTime,
-                  current_temp_f,
-                  current_humidity,
-                  pressure,
-                  pm2_5_atm,
-                  sensor_ID,
-                  date_created) %>%
-    na.omit()
+    mutate(sensor_ID = str_extract(pathname, 
+                                  "(?<=//)[:alnum:]+(?=_)"),
+           date_created = str_extract(pathname,
+                                      "(?<=_)[:alnum:]+(?=\\.)")) %>%
+    select(UTCDateTime, 
+           current_temp_f, 
+           current_humidity, 
+           pressure,
+           pm2_5_atm,
+           sensor_ID,
+           date_created) %>%
+    na.omit() # remove NA values, which happens when sensor goes offline
   return(df2)
 }
 
 PA_data_2 <- import.w.name2(file_list[1])
 
-head(PA_data_1)
+head(PA_data_2)
 ```
 
 ## Question 3
 This question is designed to give you practice at data cleaning. First, create a pipeline that (1) uses `purrr::map_dfr()` and `import.w.name()` to read in  all the the PurpleAir data files into a single data frame. Call that new data frame `PA_data_merged`. (2) Then, have the pipeline convert the character vector UTCDateTime into new column of class POSIXct using a `lubridate::` function (note - not all the indices in UTCDateTime will parse correctly; we will address this in Question 4). Finally, (3) finish the pipeline by renaming the `current_temp_f` and `current_humidity` column names to shorter names.
 
-```{r map-dplyr-pipe, warning=FALSE, message=FALSE, include=FALSE}
+```{r map-dplyr-pipe, warning=FALSE, message=FALSE, include=TRUE}
 # the map code is provided in the coursebook
 PA_data_merged <- map_dfr(file_list, import.w.name)
 PA_data_merged <- PA_data_merged %>%
@@ -96,7 +115,7 @@ PA_data_merged <- PA_data_merged %>%
 
 ## Question 4
 Can you find the 3 indices of UTCDateTime in PA_data_merged that failed to parse with lubridate::? Hint: use the `is.na()` function nested wihtin `which()` to return the row numbers in question. Both of these are baseR functions. Once you have the row entries identified you can `View()` them with a call to `slice()`.: normal entries in UTCDateTime are all the same number of characters nchar() or entries that failed to parse in the new date column will have NA associated with them.
-```{r find-NAs, include=FALSE}
+```{r find-NAs, include=TRUE}
 find_NAs <- which(is.na(PA_data_merged$datetime)) 
 NA_parse <- PA_data_merged %>%
   slice(find_NAs) %>%
@@ -110,7 +129,7 @@ Create a series of EDA plots (cdf, boxplot, histogram, time series) of the `pm2_
 ### Extra Credit
 Create the EDA figures within a single plot (hint: use the `gridExtra::` package).  Show only one legend and place it within the body of the CDF plot (hint: to move or remove a legend, add a call that uses a version of `theme(legend.position = ...)`).
 
-```{r PA-EDA-plots, message=FALSE, warning=FALSE, include=FALSE}
+```{r PA-EDA-plots, message=FALSE, warning=FALSE, include=TRUE}
 #cdf plot
 cdf_PA <- ggplot(data = PA_data_merged) + 
   geom_step(aes(x = datetime,
@@ -171,4 +190,10 @@ hist_PA
 
 # combine all into one figure 
 gridExtra::grid.arrange(cdf_PA, box_PA, timeplot_PA, hist_PA)
+```
+
+\newpage
+
+# Appendix
+``` {r show_code, ref.label = knitr::all_labels(), echo = TRUE, eval = FALSE}
 ```
