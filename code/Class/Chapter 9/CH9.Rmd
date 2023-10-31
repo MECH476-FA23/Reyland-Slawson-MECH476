@@ -1,0 +1,166 @@
+---
+title: 'Chapter 8 Class Code'
+subtitle: 'Code from class modeling chapter 8 concepts' 
+author: 'Genevieve Reyland-Slawson'
+date: '`r format(Sys.time(), "%d %B, %Y")`'
+output: html_document
+---
+
+```{r global-options, include = FALSE}
+# set global options for figures, code, warnings, and messages
+knitr::opts_chunk$set(fig.width = 6, fig.height = 4, fig.path = "../figs/",
+                      echo = TRUE, warning = FALSE, message = FALSE)
+```
+
+``` {r import packages}
+library(tidyverse)
+library(gridExtra)
+library(MASS)
+```
+
+``` {r exercises}
+salary_csv <- "/Users/genevieve/Reyland-MECH476/data/salary_ch9.csv"
+salary_ps <- read_csv(file = salary_csv)
+
+head(salary_ps)
+
+salary_ps %>%
+  group_by(sex) %>%
+  summarise(median = median(salary),
+          mean = mean(salary),
+          min = min(salary),
+          max = max(salary),
+          IQR = IQR(salary),
+          .groups = "keep") %>%
+  ungroup()
+```
+
+``` {r univariate data visualization}
+#create EDA plots
+box1 <- ggplot(data = salary_ps,
+       aes(y = sex,
+           x = salary,
+           fill = sex)) +
+  geom_boxplot(outlier.alpha = 0.2) +
+  scale_x_continuous(labels = scales::label_dollar())+
+  theme_bw() +
+  theme(legend.position = "none")
+
+hist1 <- ggplot(data = salary_ps,
+       aes(x = salary,
+           fill = sex)) +
+  geom_histogram(color = "white",
+                 bins = 50) +
+  scale_x_continuous(labels = scales::label_dollar()) +
+  theme_bw() +
+  theme(legend.position = c(0.75, 0.5))
+
+cdf1 <- ggplot(data = salary_ps,
+       aes(x = salary,
+           color = sex)) +
+  stat_ecdf() +
+  scale_x_continuous(labels = scales::label_dollar()) +
+  theme_bw() +
+  ylab("Quantile") +
+  theme(legend.position = c(0.75, 0.5))
+
+grid.arrange(box1, hist1, cdf1, nrow = 2, ncol = 2)
+```
+
+``` {r rescale and sensor}
+#rescale and censor the salary data
+salary_ps2 <- salary_ps %>%
+  dplyr::mutate(salary = salary/1000) %>% #convert to thousands of $
+  dplyr::filter(salary < 500, #censor high outliers
+                salary > 10)  #censor low outliers
+
+#recreate EDA plots
+box2 <- ggplot(data = salary_ps2,
+       aes(y = sex,
+           x = salary,
+           fill = sex)) +
+  geom_boxplot(outlier.alpha = 0.2) +
+  scale_x_continuous(labels = scales::label_dollar(suffix = "k"))+
+  theme_bw() +
+  theme(legend.position = "none")
+
+hist2 <- ggplot(data = salary_ps2,
+       aes(x = salary,
+           fill = sex)) +
+  geom_histogram(color = "white",
+                 bins = 50) +
+  scale_x_continuous(labels = scales::label_dollar(suffix = "k")) +
+  theme_bw() +
+  theme(legend.position = c(0.75, 0.5))
+
+cdf2 <- ggplot(data = salary_ps2,
+       aes(x = salary,
+           color = sex)) +
+  stat_ecdf() +
+  scale_x_continuous(labels = scales::label_dollar(suffix = "k")) +
+  theme_bw() +
+  ylab("Quantile") +
+  theme(legend.position = c(0.75, 0.5))
+
+grid.arrange(box2, hist2, cdf2, nrow = 2, ncol = 2)
+```
+
+``` {r log-normal distribution}
+fit.lnorm <- fitdistr(salary_ps2$salary, densfun = "log-normal")
+fit.lnorm$estimate %>%
+  round(., 2) 
+```
+
+``` {r Fitted vs Actual}
+sal_simulate <- tibble(x = rlnorm(n = length(salary_ps2$salary),
+                                 meanlog = fit.lnorm$estimate[[1]],
+                                 sdlog = fit.lnorm$estimate[[2]]))
+
+ggplot() +
+  geom_histogram(data = salary_ps2,
+                 aes(x = salary,
+                     y = ..density..),
+                 color = "white",
+                 fill = "navy",
+                 bins = 35) +
+  geom_density(data = sal_simulate,
+                aes(x = x),
+               color = "darkorange1",
+               size = 1) +
+  ylab("Probability Density") +
+  scale_x_continuous(labels = scales::label_dollar(suffix = "k"),
+                     limits = c(0,500)) +
+  theme_bw()
+
+```
+
+``` {r transform}
+salary_ps2 <- salary_ps2 %>%
+  mutate(log.salary = log(salary))
+
+ggplot() +
+  geom_histogram(data = salary_ps2,
+                 aes(x = log.salary),
+                 color = "white",
+                 fill = "navy",
+                 bins = 20) +
+  ylab("Frequency") +
+  xlab("ln(salary)") +
+  theme_bw()
+
+salary_ps2 <- salary_ps2 %>%
+  mutate(log.salary = log(salary))
+
+ggplot() +
+  geom_histogram(data = salary_ps2,
+                 aes(x = salary),
+                 color = "white",
+                 fill = "navy",
+                 bins = 20) +
+  ylab("Frequency") +
+  xlab("Salary") +
+  # transform the axis, instead of the data (works well with lognormal data)
+  scale_x_log10(labels = scales::label_dollar(accuracy = 1, 
+                                              suffix = "k")) +
+  theme_bw()
+```

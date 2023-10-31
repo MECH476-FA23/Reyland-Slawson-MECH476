@@ -1,15 +1,15 @@
 ---
 title: 'MECH481A6: Engineering Data Analysis in R'
 subtitle: 'Chapter 9 Homework: Transformations' 
-author: 'Student Name'
+author: 'Genevieve Reyland-Slawson'
 date: '`r format(Sys.time(), "%d %B, %Y")`'
-output: pdf_document
+output: html_document
 ---
 
 ```{r global-options, include=FALSE}
 # set global options for figures, code, warnings, and messages
 knitr::opts_chunk$set(fig.width=6, fig.height=4, fig.path="../figs/",
-                      echo=FALSE, warning=FALSE, message=FALSE)
+                      echo=TRUE, warning=FALSE, message=FALSE)
 ```
 
 # Load packages
@@ -35,34 +35,112 @@ the document. For example, you could use the same theme for all plots.
 ## Question 1
 
 Recreate Figure 9.8 (the three EDA plots based on `salary_ps2$salary`), but show the plots on a log-scale x-axis. Plot the histogram with 30 bins and move the legends so that they don't block the data. Does the data in these plots appear more symmetric about the median?  Why or why not?
-```{r import-clean-data}
 
+   --> The data in the plots appears more symmetric about the median, as seen the most clearly in the histrogram, the median is about where the max is and the data is symmetrical if a line were to be drawn from the center of the plot. 
+```{r import-clean-data}
+salary_csv <- "/Users/genevieve/Reyland-MECH476/data/salary_ch9.csv"
+salary_ps <- read_csv(file = salary_csv)
+
+salary_ps %>%
+  group_by(sex) %>%
+  summarise(median = median(salary),
+            mean = mean(salary),
+            min = min(salary),
+            max = max(salary),
+            IQR = IQR(salary),
+            .groups = "keep") %>%
+  ungroup() 
+
+ps_log <- salary_ps %>%
+  mutate(log.salary = log(salary))
 ```
 
 ```{r plot-log-scale}
+pslog_box <- ggplot(data = ps_log,
+                        aes(y = sex,
+                            x = log.salary,
+                            fill = sex)) + 
+  geom_boxplot(outlier.alpha = 0.2) + 
+  labs(x = "Log Salary",
+       y = "Sex",
+       title = "Log Salary based on Sex",
+       subtitle = "Log of salary levels distributed based on sex") + 
+  theme_bw() +
+  theme(legend.position = "none")
+pslog_box
 
+pslog_hist <- ggplot(data = ps_log,
+                     aes(x = log.salary,
+                         fill = sex)) + 
+  geom_histogram(color = "white",
+                 bins = 30) + 
+  labs(x = "Log Salary",
+       y = "Number of People",
+       title = "Log Salary Distributed by Sex",
+       subtitle = "Number of people who have log salary distributed by sex") + 
+  theme_bw()
+pslog_hist
 
+pslog_cdf <- ggplot(data = ps_log,
+                    aes(x = log.salary,
+                        color = sex)) + 
+  stat_ecdf() + 
+  labs(x = "Log Salary",
+       y = "Quantile",
+       title = "Log Salary based on Sex",
+       subtitle = "Quantiles of log salaries distributed based on sex") + 
+  theme_bw()
+pslog_cdf 
 
+grid.arrange(pslog_box, pslog_hist, pslog_cdf, nrow = 2, ncol = 2)
 ```
 
 ## Question 2
 
 Modify the code that created the `sal_simulate` data frame to create a variable that simulates quantiles from a *cumulative distribution*. Plot these data (instead of a histogram).  Hint: instead of `rlnorm()` you will need to use a different log density function that takes a vector of quantiles as input (you will need to specify the quantile vector).  Type ?Lognormal into the Console for help.
 
-```{r fig9-9-cdf, include=FALSE}
+```{r fig9-9-cdf, include=TRUE}
 #fit the data to a lognormal distribution
+salary_ps2 <- salary_ps %>%
+  dplyr::mutate(salary = salary/100) %>% # salaries now in terms of thousands
+  dplyr::filter(salary < 500,
+                salary > 10)
+fit.plnorm <- fitdistr(salary_ps2$salary, densfun = "log-normal")
+fit.plnorm$estimate %>%
+  round(.,2)
+quantiles <- seq(0.01, 0.99, by = 0.01)
+sim_vals <- qlnorm(p = quantiles,
+                   meanlog = fit.plnorm$estimate[[1]],
+                   sdlog = fit.plnorm$estimate[[2]])
 
+sal_simulate1 <- tibble(Quantile = quantiles, 
+                        Simulated_Values = sim_vals)
 
-#simulate quantiles
-
+ggplot(sal_simulate1, 
+       aes(x = sim_vals, 
+           y = Quantile)) +
+  geom_line() +
+  labs(x = "Simulated Values",
+       y = "Quantiles",
+       title = "Quantiles Simulated from Lognormal Cumulative Distribution",
+       subtitle = "Quantiles simulated from log salaries in a cumulative distribution") + 
+  theme_bw()
 
 ```
 
 ## Question 3
 Mutate the `salary_ps2` data frame to create a new column variable that takes the log of the salary data (call that variable `log.salary`).  Then use `fitdistr()` to fit a *normal distribution* to `log.salary`.  What are the resultant parameter estimates for the mean and sd?  Hint: the output of `fitdistr()` is a list; look in the `estimate` entry for these parameters.  How close are these estimates to those calculated in [section 9.6.4](https://smogdr.github.io/edar_coursebook/transform.html#fit-a-log-normal-distribution) of the Coursebook?
 
+   --> The mean is 5.286 and the standard deviation is 0.7227, these are similar to the values in the book which are mean = 4.32 and sd = 0.67. 
 ```{r fit-nomral}
+salary_ps2 = salary_ps2 %>%
+  dplyr::mutate(log.salary = log(salary)) 
 
+fitdistr(salary_ps2$salary, "log-normal")
+```
+
+# Appendix 
+```{r show_code, ref.label = knitr::all_labels(), echo = TRUE, eval = FALSE}
 ```
 
 
