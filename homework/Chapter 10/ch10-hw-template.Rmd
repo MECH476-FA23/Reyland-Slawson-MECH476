@@ -9,7 +9,7 @@ output: pdf_document
 ```{r global-options, include=FALSE}
 # set global options for figures, code, warnings, and messages
 knitr::opts_chunk$set(fig.width=6, fig.height=4, fig.path="../figs/",
-                      echo=FALSE, warning=FALSE, message=FALSE)
+                      echo=TRUE, warning=FALSE, message=FALSE)
 ```
 
 # Load packages
