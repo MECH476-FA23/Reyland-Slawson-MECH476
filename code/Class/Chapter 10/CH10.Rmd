@@ -17,6 +17,7 @@ library(tidyverse)
 library(gridExtra)
 library(MASS)
 library(lubridate)
+library(ggplot2)
 ```
 
 ``` {r Precision}
@@ -30,4 +31,50 @@ temperatures <- tibble( data_seq = seq(from = 1,
                                       94.4, 94.1, 94.2, 92.3, 94.4)) 
 
 sd(temperatures$data_temp) %>% round(2)
+
+# 4-plot of data 
+p1 <- ggplot(data = temperatures) +
+  geom_line(aes(x=data_seq, y=data_temp),
+            color = "grey") +
+  geom_point(aes(x=data_seq, y=data_temp),
+             size = 2,
+             shape = 1) +
+  xlab("Sequence Order") +
+  ylab("Temperature, °F") +
+  theme_classic()
+
+p2 <- ggplot(data = temperatures) +
+  stat_ecdf(aes(x=data_temp)) +
+  xlab("Temperature, °F") +
+  ylab("Quantile") +
+  theme_classic()
+
+p3 <- ggplot(data = temperatures) +
+  geom_histogram(aes(x = data_temp),
+                 bins = 6,
+                 color = "white") +
+  xlab("Temperature, °F") +
+  ylab("Frequency") +
+  theme_classic()
+
+p4 <- ggAcf(x = temperatures$data_temp) +
+  theme_classic() +
+  ggtitle(label = NULL)
+
+grid.arrange(p1, p2, p3, p4)
+
+# sig figs 
+sd(temperatures$data_temp)
+```
+
+``` {r addition and subtraction error}
+weights <- tibble(
+  A = c(1200, 1250, 1210, 1180, 1200),
+  B = c(220, 230, 220, 210, 230),
+  C = c(3000, 3020, 3100, 3060, 3120)
+) %>%
+  #these are all weights so let's tidy this data frame
+  pivot_longer(cols = A:C,
+               names_to = "Component",
+               values_to = "Weight")
 ```

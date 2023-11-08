@@ -3,7 +3,7 @@ title: 'MECH481A6: Engineering Data Analysis in R'
 subtitle: 'Chapter 10 Homework: Measurement' 
 author: 'Student Name'
 date: '`r format(Sys.time(), "%d %B, %Y")`'
-output: pdf_document
+output: html_document
 ---
 
 ```{r global-options, include=FALSE}
@@ -42,19 +42,41 @@ Import the `airlift_mass_repeatability.csv` file into a data frame called `blank
 - create a new column vector named `mass_mg` by rescaling the `mass_g` data (i.e., convert $g$ to $mg$ by multiplying `mass_g` by 1000)
 
 ```{r import-clean-data}
-
-
+airlift_csv <- "/Users/genevieve/Reyland-MECH476/data/AIRLIFT_mass_repeatability.csv"
+airlift_data <- readr::read_csv(file = airlift_csv) %>%
+  dplyr::select("Date", 
+                "Filter ID", 
+                "Mass (g)") %>%
+  dplyr::rename(date = "Date", 
+                id = "Filter ID", 
+                mass_g = "Mass (g)") %>% 
+  dplyr::mutate(date = lubridate::dmy(date)) %>%
+  dplyr::mutate(id = as.factor(id)) %>%
+  dplyr::mutate(mass_mg = mass_g*1000)
 ```
 
 ## Question 2:  
 
   2a. Are there any NAs present in the data frame?  
+     No
   2b. How many unique filter IDs are present in this data frame?  
+     234
   2c. How many samples are present for each filter ID? Hint: look up the `dplyr::count()` function.  
+     78, 78, 78, 76, 78
   2d. Over how long of a period were these blank measurements made? Hint: this can be done in base R with a `max() - min()` or with `lubridate::interval() %>% as.duration()`.
+     35 days
+     
 ```{r unique-IDs}
+is.na(airlift_data)
 
+tally(unique(airlift_data))
 
+filter_id_count <- airlift_data %>%
+  group_by(id) %>%
+  count()
+
+measurement_time <- max(airlift_data$date) - min(airlift_data$date)
+measurement_time
 ```
 
 ## Question 3
@@ -62,12 +84,27 @@ Import the `airlift_mass_repeatability.csv` file into a data frame called `blank
 Group the `blanks` data frame by `id` and calculate mean, median, and standard deviations for each filter id.  Hint: use `group_by() %>% summarise()` to do this efficiently.
 
 ```{r blank-descriprives}
-
-
+blank_descriptives <- airlift_data %>%
+  group_by(id) %>%
+  summarise(median = median(mass_mg),
+            mean = mean(mass_mg), 
+            sd = sd(mass_mg))
+blank_descriptives
 ```
 
 ## Question 4
 
 Calculate the limit of detection (LOD) for this measurement method. Note: you will need to calculate standard deviations for each filter `id` (as done in question 3) and then estimate LOD from $LOD = 3\cdot \sigma_b$ where $\sigma_b$ is calculated for each filter `id`.
 
+``` {r LOD}
+# LOD = mean + 3*sd
+std_values <- blank_descriptives %>%
+  dplyr::mutate(LOD = mean + sd*3)
+std_values
+```
 
+\newpage
+
+# Appendix
+``` {r show_code, ref.label = knitr::all_labels(), echo = TRUE, eval = FALSE}
+```
