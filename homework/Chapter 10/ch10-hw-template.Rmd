@@ -58,12 +58,16 @@ airlift_data <- readr::read_csv(file = airlift_csv) %>%
 ## Question 2:  
 
   2a. Are there any NAs present in the data frame?  
+  
      No
   2b. How many unique filter IDs are present in this data frame?  
+     
      234
   2c. How many samples are present for each filter ID? Hint: look up the `dplyr::count()` function.  
+     
      78, 78, 78, 76, 78
   2d. Over how long of a period were these blank measurements made? Hint: this can be done in base R with a `max() - min()` or with `lubridate::interval() %>% as.duration()`.
+     
      35 days
      
 ```{r unique-IDs}

@@ -417,14 +417,18 @@ airlift_data &lt;- readr::read_csv(file = airlift_csv) %&gt;%
 </div>
 <div id="question-2" class="section level2">
 <h2>Question 2:</h2>
-<p>2a. Are there any NAs present in the data frame?<br />
-No 2b. How many unique filter IDs are present in this data frame?<br />
-234 2c. How many samples are present for each filter ID? Hint: look up
-the <code>dplyr::count()</code> function.<br />
-78, 78, 78, 76, 78 2d. Over how long of a period were these blank
-measurements made? Hint: this can be done in base R with a
-<code>max() - min()</code> or with
-<code>lubridate::interval() %&gt;% as.duration()</code>. 35 days</p>
+<p>2a. Are there any NAs present in the data frame?</p>
+<pre><code> No</code></pre>
+<p>2b. How many unique filter IDs are present in this data frame?</p>
+<pre><code> 234</code></pre>
+<p>2c. How many samples are present for each filter ID? Hint: look up
+the <code>dplyr::count()</code> function.</p>
+<pre><code> 78, 78, 78, 76, 78</code></pre>
+<p>2d. Over how long of a period were these blank measurements made?
+Hint: this can be done in base R with a <code>max() - min()</code> or
+with <code>lubridate::interval() %&gt;% as.duration()</code>.</p>
+<pre><code> 35 days
+ </code></pre>
 <pre class="r"><code>is.na(airlift_data)</code></pre>
 <pre><code>##         date    id mass_g mass_mg
 ##   [1,] FALSE FALSE  FALSE   FALSE
