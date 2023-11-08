@@ -69,7 +69,6 @@ airlift_data <- readr::read_csv(file = airlift_csv) %>%
   2d. Over how long of a period were these blank measurements made? Hint: this can be done in base R with a `max() - min()` or with `lubridate::interval() %>% as.duration()`.
      
      35 days
-     
 ```{r unique-IDs}
 is.na(airlift_data)
 
