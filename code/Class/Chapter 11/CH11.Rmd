@@ -1,0 +1,110 @@
+---
+title: 'Chapter 11 Class Code'
+subtitle: 'Code from class modeling chapter 8 concepts' 
+author: 'Genevieve Reyland-Slawson'
+date: '`r format(Sys.time(), "%d %B, %Y")`'
+output: html_document
+---
+
+```{r global-options, include = FALSE}
+# set global options for figures, code, warnings, and messages
+knitr::opts_chunk$set(fig.width = 6, fig.height = 4, fig.path = "../figs/",
+                      echo = TRUE, warning = FALSE, message = FALSE)
+```
+
+Model = a system of postulates, data, and inferences presented as a mathematical description of an entity or state of affiars
+OLS = Ordinary Least Squares --> one of the most common ways to fit a linear regression. 
+residuals that are larger have more impact on the line because when you square them, they are larger (1 squared is 10x less impactful than 10 squared)
+
+Front-end asumptions: 
+  - form of model is linear in coefficients --> parameter estimates (beta 0, beta 1, beta n) show up in final model as being added together 
+    --> check by looking and see if beta is linear 
+  - model is correctly specified 
+  - no collinearity between predictor variables --> applies when model has more than one predictor (X1, X2, Xn) 
+    --> check by running correlation analysis on pairs of independent variables (calculate pearson or spearman correlation coefficient) and create a correlation plot matris for all pairs and examine how they're correlated. 
+    --> when two or more predictor variables are highly correlated, the model will not fit parameter estimates (beta values) well. (Not good)
+    
+Back-end assumptions: 
+  -  mean of residuals is zero. --> can check by calculating the model residuals and take the mean
+    --> if the mean is not very close to zero then there's been an error with the model implementation. It should be zero if the model lis set up and the OLS algorithm is implemented correctly. 
+  - residuals are normally distributed --> can chack by creating a Q-Q plot about residuals
+    --> iolation of normally assumption can affect the precision of estimates 
+  - residuals are homoscedstic --> means to have equal variance 
+    --> can check by creating a scatterplot of residuals, residuals should appear evenly scattered in both directions about zero with no change in magnitude as y increases. 
+  - no residual autocorrelation --> autocorrelation means model is not properly specified 
+    --> check by creating autocorrelation and partial correlation plots and perform a durbin-watson test.
+  - no residual correlation with ind variables --> shows not properly specifed 
+
+``` {r import packages} 
+library(tidyverse)
+library(ggplot2)
+```
+
+``` {r plot raw data} 
+body_csv <- "/Users/genevieve/Reyland-MECH476/data/bodysize.csv" 
+body_data <- readr::read_csv(file = body_csv) 
+ggplot(data = body_data) + 
+  geom_point(aes(x = waist, 
+                 y = mass), 
+                 alpha = 0.3)
+```
+clearly a strong relationship, looks very linear. First, we want to note, mass = density*volume = density*area*height
+
+Then note, area = circumference^2 / 2pi if we approximate the human body as a sylinder. 
+
+Then combine so mass = density*(cirfumfrence^2/2pi)*height. OR we could say that square root of mass is linearly related to body circumfrence. 
+
+Converting mass to square root mass to examine the data set.
+``` {r transform data} 
+p1 <- ggplot(data = body_data) +
+  geom_point(aes(x = waist, y = mass),
+             alpha = 0.1,
+             color = "maroon4") +
+  ylab("Mass, kg") +
+  xlab("Waist Circumference, cm") +
+  theme_classic(base_size = 13)
+
+p2 <- ggplot(data = body_data) +
+  geom_point(aes(x = waist, y = sqrt_mass),
+             alpha = 0.1,
+             color = "royalblue2") +
+  ylab(expression(sqrt(mass))) +
+  xlab("Waist Circumference, cm") +
+  theme_classic(base_size = 13)
+
+grid.arrange(p1, p2, ncol = 2)
+```
+
+``` {r lm function}
+# linear model = lm(), performs an OLS fit on any linear model specified
+# lm() requires two args a formula and the data (y ~ x)
+
+model1 <- lm(mass ~ waist, data = body_data)
+model2 <- lm(sqrt_mass ~ waist, data = body_data) 
+model1$coefficients
+summary(model1)
+```
+Summary will be able to show how the moel fits the data
+
+  Option 1: One way is to add a geom_smooth() layer to the original scatter plot. The geom_smooth() function is a generic curve fitting algorithm for X, Y data. If we specify model = "lm" and formula = "y ~ x" as arguments, R will create identical linear models and plot those fits across the range of our data.
+  
+  Options 2: Another way would be to call geom_abline() and specify as arguments:
+    slope = model1$coefficients[[2]] and
+    intercept = model1$coefficients[[1]]
+  Option 3: And yet a third way would be to use ggplot::stat_function() where we explicitly specify the model its coefficients as a linear function in R. You can learn more about each of these approaches in the help section or by typing ?stat_function into the Console.
+
+``` {r see which is better}
+# note how we can add layers to existing ggplot objects: added more to geom_smooth method, formula, color
+p1.2 <- p1 + 
+  geom_smooth(data = body_data,
+              aes(x = waist, y = mass),
+              method = "lm",
+              formula = "y ~ x",
+              color = "black")
+
+p2.2 <- p2 +
+  geom_abline(intercept = model2$coefficients[[1]],
+              slope = model2$coefficients[[2]])
+
+grid.arrange(p1.2, p2.2, ncol = 2)
+```

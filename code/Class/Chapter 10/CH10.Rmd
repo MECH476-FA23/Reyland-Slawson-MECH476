@@ -1,5 +1,5 @@
 ---
-title: 'Chapter 8 Class Code'
+title: 'Chapter 10 Class Code'
 subtitle: 'Code from class modeling chapter 8 concepts' 
 author: 'Genevieve Reyland-Slawson'
 date: '`r format(Sys.time(), "%d %B, %Y")`'
