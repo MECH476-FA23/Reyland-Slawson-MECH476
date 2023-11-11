@@ -1,7 +1,7 @@
 ---
 title: 'MECH481A6: Engineering Data Analysis in R'
 subtitle: 'Chapter 11 Homework: Modeling' 
-author: 'Student Name'
+author: 'Genevieve Reyland-Slawson'
 date: '`r format(Sys.time(), "%d %B, %Y")`'
 output: html_document
 ---
