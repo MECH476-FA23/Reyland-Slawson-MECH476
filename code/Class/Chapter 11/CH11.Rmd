@@ -84,7 +84,7 @@ model2 <- lm(sqrt_mass ~ waist, data = body_data)
 model1$coefficients
 summary(model1)
 ```
-Summary will be able to show how the moel fits the data
+Summary will be able to show how the model fits the data
 
   Option 1: One way is to add a geom_smooth() layer to the original scatter plot. The geom_smooth() function is a generic curve fitting algorithm for X, Y data. If we specify model = "lm" and formula = "y ~ x" as arguments, R will create identical linear models and plot those fits across the range of our data.
   
