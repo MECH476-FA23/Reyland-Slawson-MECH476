@@ -1,6 +1,6 @@
 ---
 title: 'Chapter 11 Class Code'
-subtitle: 'Code from class modeling chapter 8 concepts' 
+subtitle: 'Code from class modeling chapter 11 concepts' 
 author: 'Genevieve Reyland-Slawson'
 date: '`r format(Sys.time(), "%d %B, %Y")`'
 output: html_document
@@ -15,6 +15,8 @@ knitr::opts_chunk$set(fig.width = 6, fig.height = 4, fig.path = "../figs/",
 Model = a system of postulates, data, and inferences presented as a mathematical description of an entity or state of affiars
 OLS = Ordinary Least Squares --> one of the most common ways to fit a linear regression. 
 residuals that are larger have more impact on the line because when you square them, they are larger (1 squared is 10x less impactful than 10 squared)
+
+Residuals are the errors in the model (y=mx+b), b is the error which are the residuals. The goal is to minimize the residuals to show the best thing. You should square the residuals so that it shows the negative values and they don't cancel out the positive residuals. 
 
 Front-end asumptions: 
   - form of model is linear in coefficients --> parameter estimates (beta 0, beta 1, beta n) show up in final model as being added together 

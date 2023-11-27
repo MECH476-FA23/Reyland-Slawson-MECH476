@@ -1,6 +1,6 @@
 ---
-title: 'Chapter 8 Class Code'
-subtitle: 'Code from class modeling chapter 8 concepts' 
+title: 'Chapter 9 Class Code'
+subtitle: 'Code from class modeling chapter 9 concepts' 
 author: 'Genevieve Reyland-Slawson'
 date: '`r format(Sys.time(), "%d %B, %Y")`'
 output: html_document
