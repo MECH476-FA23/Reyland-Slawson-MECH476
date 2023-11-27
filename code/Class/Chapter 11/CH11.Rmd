@@ -40,11 +40,13 @@ Back-end assumptions:
 ``` {r import packages} 
 library(tidyverse)
 library(ggplot2)
+library(gridExtra)
 ```
-
+# Plot Raw Data
 ``` {r plot raw data} 
 body_csv <- "/Users/genevieve/Reyland-MECH476/data/bodysize.csv" 
-body_data <- readr::read_csv(file = body_csv) 
+body_data <- readr::read_csv(file = body_csv) %>%
+  mutate(sex = gender - 1)
 ggplot(data = body_data) + 
   geom_point(aes(x = waist, 
                  y = mass), 
@@ -77,6 +79,7 @@ p2 <- ggplot(data = body_data) +
 grid.arrange(p1, p2, ncol = 2)
 ```
 
+# The lm() Function
 ``` {r lm function}
 # linear model = lm(), performs an OLS fit on any linear model specified
 # lm() requires two args a formula and the data (y ~ x)
@@ -109,4 +112,102 @@ p2.2 <- p2 +
               slope = model2$coefficients[[2]])
 
 grid.arrange(p1.2, p2.2, ncol = 2)
+```
+
+``` {r lm function line}
+# note how we can add layers to existing ggplot objects to see how the fit is
+p1.2 <- p1 + 
+  geom_smooth(data = data_18,
+              aes(x = waist, y = mass),
+              method = "lm",
+              formula = "y ~ x",
+              color = "black")
+
+p2.2 <- p2 +
+  geom_abline(intercept = model2$coefficients[[1]],
+              slope = model2$coefficients[[2]])
+
+grid.arrange(p1.2, p2.2, ncol = 2)
+```
+
+# Q-Q Plot
+``` {r OLS diagnostics}
+mean(model1$residuals)
+mean(model2$residuals)
+
+## Q-Q Plot to check for Assumption 5: the error term is normall distributed
+p3 <- ggplot(data  = model1$model, aes(sample = model1$residuals)) +
+  geom_qq(alpha = 0.1,
+          color = "maroon4") +
+  geom_qq_line(color = "grey") +
+  ggtitle("Model 1: mass ~ waist") +
+  theme_classic()
+
+p4 <- ggplot(data  = model2$model, aes(sample = model2$residuals)) +
+  geom_qq(alpha = 0.1,
+          color = "royalblue2") +
+  geom_qq_line(color = "grey") +
+  ggtitle("Model 2: sqrt(mass) ~ waist") +
+  theme_classic()
+
+grid.arrange(p3, p4, ncol = 2)
+
+# line is expected to be perfect, so the points should be on the line to be evenly distributed. The graphs show the expected over a normal distribution
+```
+
+# Homoscedastic Scatterplot
+``` {r OLS diagnostics}
+## checking assumption 6: the error term is homoscedastic
+# shows resudal's size versus the y value 
+p5 <- ggplot(data = model1$model) + 
+  geom_point(aes(x = model1$fitted.values, y =model1$residuals),
+             alpha = 0.25,
+             color = "maroon3") +
+  geom_hline(yintercept = 0) +
+  theme_classic() +
+  theme(aspect.ratio = 0.5)
+
+p6 <- ggplot(data = model2$model)+ 
+  geom_point(aes(x = model2$fitted.values, y =model2$residuals),
+             alpha = 0.25,
+             color= "royalblue2") +
+  geom_hline(yintercept = 0) +
+  theme_classic() +
+  theme(aspect.ratio = 0.5)
+
+grid.arrange(p5, p6, ncol = 1)
+```
+
+# Updated Model 
+``` {r model3}
+model3 <- lm(mass ~ waist + gender, data = body_data)
+summary(model3)
+
+# specify model more 
+model4 <- lm(mass ~ height*waist^2 + gender + age, data = body_data)
+summary(model4)
+```
+
+# Partial Autocorrelation Plot
+``` {r OLS diagnostics}
+# checking assumption 7: no autocorrelation among residuals
+stats::pacf(model1$residuals,
+           main = "Model 1 Partial Autocorrelation Plot")
+stats::pacf(model2$residuals,
+            main = "Model 2 Partial Autocorrelation Plot")
+
+# neither plot show a strong degree of autocorrelation, make it better by dividing the models by sex
+```
+
+``` {r OLS diagnostics}
+# checking assumption 8: residuals are not correlated with predictor variables 
+cor(x = model1$residuals, 
+    y = model1$model[,2],
+    method = "pearson" )
+
+cor(x = model2$residuals, 
+    y = model1$model[,2],
+    method = "pearson" )
+
+# both very small numbers, model 2 is better specified (not better performing necessarily), but based on fit diagnostics and process knowledge, model 2 is better. Both explained ~80% of variance in dependent variable. 
 ```
