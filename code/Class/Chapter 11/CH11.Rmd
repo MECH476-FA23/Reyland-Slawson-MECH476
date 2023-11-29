@@ -117,7 +117,7 @@ grid.arrange(p1.2, p2.2, ncol = 2)
 ``` {r lm function line}
 # note how we can add layers to existing ggplot objects to see how the fit is
 p1.2 <- p1 + 
-  geom_smooth(data = data_18,
+  geom_smooth(data = body_data,
               aes(x = waist, y = mass),
               method = "lm",
               formula = "y ~ x",
@@ -210,4 +210,46 @@ cor(x = model2$residuals,
     method = "pearson" )
 
 # both very small numbers, model 2 is better specified (not better performing necessarily), but based on fit diagnostics and process knowledge, model 2 is better. Both explained ~80% of variance in dependent variable. 
+```
+# Calibration 
+``` {r calibration}
+cal_csv <- "/Users/genevieve/Reyland-MECH476/data/cal_aod.csv"
+cal_data <- read_csv(file = cal_csv, col_names = TRUE)
+
+head(cal_data)
+
+tidy_cal <- cal_data %>%
+  pivot_longer(cols = c("amod", "aeronet"), 
+               names_to = "instrument", 
+               values_to = "aod")
+
+head(tidy_cal)
+```
+
+``` {r linear fit}
+aod.fit <- lm(amod ~ aeronet, data = cal_data)
+
+aod.summary <- summary(aod.fit)
+
+aod.summary
+
+# plot data and fit, geom smooth shows the fitted line, geom point shows the data
+ggplot(data = cal_data,
+       aes(x = aeronet, y = amod)) +
+  geom_smooth(formula = y ~ x,
+              method = "lm",
+              linewidth = 0.5) +
+  geom_point(alpha = 0.25,
+             size = 2) +
+  xlab("Aeronet AOD") +
+  ylab("AMOD AOD") +
+  annotate("text", x = 0.5, y = 1.5, 
+           label = paste("Y = ", 
+                         round(aod.summary$coefficients[[2,1]], 2),
+                         "X + ", round(aod.summary$coefficients[[1,1]], 2),
+                         "\n R^2 = ",
+                         round(aod.summary$r.squared, 3))) +
+  coord_fixed() +
+  theme_bw(base_size = 12)
+# base size says don't show anything smaller than a 12pt
 ```
