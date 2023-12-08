@@ -1,0 +1,153 @@
+Final Exam Class Note Review
+
+35 questions
+contains some questions from 1 and 2 but will be more heavy on the content since
+Regular expressions: not a lot, perhaps 1 or 2 --> idk what this is lowkey
+
+
+
+
+
+
+
+
+Exam functions
+
+base:: --> the base function of R, can do functions with base::function like abs value. Will just perform function with base R package
+[ ] --> brackets are used when indexing things, e.g. when you have an array of numbers called numbers, then you can index the array numbers[1] to show the first number in the array. 
+# --> makes the text a comment
+? --> will show the functionality of the function, see R index
+<- --> assigns a function to an object (x <- 5 means x = 5 or words <- c("hello" "world"))
+c --> makes a list of concatenated items
+: --> operator that shows through a set of numbers, e.g. numbers <- 1:5 returns 1, 2, 3, 4, 5
+Logical operators: == != & |
+Directory abbreviations: ~ . .. ../..
+  ~ home directory
+  . current working directory
+  .. one up from working directory
+  ../.. two up from working directory
+list.files --> produces a character vector of the names of files or directories in the named directory
+unique --> returns a vector, data frame, or array like x but with all the duplicates removed
+is.na --> returns a vector with TRUE and FALSE if the value is equal to NA in each string e.g.  a <- c(NA, 5, 1, NA, 0, NA), is.na(a) returns TRUE FALSE FALSE  TRUE FALSE  TRUE
+colnames --> retrieves or set the column names of a matrix like object (can either rename or get the value)
+getwd --> returns working directory
+sessionInfo --> returns session info
+print --> returns the value of string or matrix etc. 
+paste --> concatenates vectors after converting to character
+paste0 --> concatenates vectors after convering to character with no spaces
+class --> returns the class of the object
+length --> returns length of object
+sum 
+library --> format: library(package)
+install.package --> format: install.package("package")
+dim --> returns or sets the dimensions of an object
+nrow --> returns number of rows
+ncol --> returns number of columns
+str --> returns structure of object and then returns object
+summary --> gives glimpse of the data in the object
+head --> shows the top row of an object/data frame/matrix
+tail --> shows bottom  row of an object/data frame/matrix
+vignette --> view a specific package vignette
+seq --> generate regular sequences 
+length
+unclass
+POSIXct
+POSIXlt
+as.factor
+levels
+stats::
+acf
+pacf
+min
+max
+quantile
+runif
+mean
+sd
+median
+IQR
+cor
+complete.cases
+dplyr::
+slice
+slice_max
+group_by
+tally
+count
+summarise
+select
+glimpse
+mutate
+rename
+filter
+arrange
+across
+pivot_longer
+case_when
+readr::
+read_csv
+read_delim
+read_fwf
+optional readr arguments: skip, col_types, col_names, n_max
+tibble::
+tibble
+magittr::
+%>%
+ggplot::
+aes
+geom_bar
+geom_line
+geom_point
+geom_histogram
+geom_boxplot
+geom_jitter
+stat_ecdf
+scale_x_log10
+scale_y_log10
+ggtitle
+ggsave
+facet_grid
+vars
+aes(color = )
+aes(fill = )
+aes(shape =)
+color
+fill
+shape
+alpha
+xlab
+ylab
+labs
+xlim
+ylim
+theme_bw
+stringr::
+str_detect
+str_extract
+str_subset
+regex syntax: see Table 6.1 in coursebook
+str_split
+str_replace
+Sys.time
+lubridate::
+ymd
+dym
+ymd_hms
+wday
+year
+mday
+month
+New functions since exam 2
+function
+formals
+body
+return
+if else
+map
+mapdfr
+MASS::fitdistr()
+lm
+summary
+geom_smooth
+geom_abline
+geom_qq
